@@ -1,20 +1,40 @@
+// src/stores/auth.js
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 export const useAuthStore = defineStore('auth', () => {
     const user = ref(null)
+    const token = ref(localStorage.getItem('token') || '')
 
-    const isAuthenticated = computed(() => !!user.value)
+    const isAuthenticated = computed(() => !!token.value)
 
-    function login(email, password) {
-//logika logowania TODO
-        user.value = { name: 'Test User', email }
+    async function login(email, password) {
+        try {
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            })
+
+            if (!res.ok) throw new Error('Logowanie nie powiodło się')
+
+            const data = await res.json()
+            token.value = data.token
+            localStorage.setItem('token', data.token)
+            user.value = data.user || null
+        } catch (err) {
+            console.error(err)
+            throw err
+        }
     }
 
-    function register(name, email, password) {
-        // logika rejestracji TODO
-        user.value = { name, email }
+    function logout() {
+        token.value = ''
+        user.value = null
+        localStorage.removeItem('token')
     }
 
-    return { user, isAuthenticated, login, register }
+    return { user, token, isAuthenticated, login, logout }
 })

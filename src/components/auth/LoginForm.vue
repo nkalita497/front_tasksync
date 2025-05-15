@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <h2 class="login-title">Logowanie</h2>
-    <form @submit.prevent="login" class="login-form">
+    <form @submit.prevent="submitLogin" class="login-form">
       <div class="form-group">
         <label class="form-label">Email</label>
         <input
@@ -9,8 +9,10 @@
             type="email"
             class="form-input"
             placeholder="twój@email.com"
+            required
         />
       </div>
+
       <div class="form-group">
         <label class="form-label">Hasło</label>
         <input
@@ -18,28 +20,37 @@
             type="password"
             class="form-input"
             placeholder="••••••••"
+            required
         />
       </div>
-      <button type="submit" class="login-button">
-        Zaloguj się
-      </button>
+
+      <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+      <button type="submit" class="login-button">Zaloguj się</button>
     </form>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { useAuthStore } from '../../stores/auth'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth.js'
 
 const email = ref('')
 const password = ref('')
+const errorMessage = ref('')
+
 const authStore = useAuthStore()
 const router = useRouter()
 
-const login = async () => {
-  await authStore.login(email.value, password.value)
-  router.push('/dashboard')
+const submitLogin = async () => {
+  errorMessage.value = ''
+  try {
+    await authStore.login(email.value, password.value)
+    router.push('/dashboard')
+  } catch {
+    errorMessage.value = 'Nieprawidłowy email lub hasło'
+  }
 }
 </script>
 
@@ -102,5 +113,13 @@ const login = async () => {
 
 .login-button:hover {
   background-color: #ea580c;
+}
+
+.error-message {
+  color: #dc2626;
+  font-size: 0.95rem;
+  text-align: center;
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
 }
 </style>
