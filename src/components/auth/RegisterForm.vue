@@ -4,7 +4,12 @@
     <form @submit.prevent="register" class="register-form">
       <div class="form-group">
         <label class="form-label">Imię</label>
-        <input v-model="name" type="text" class="form-input" placeholder="Twoje imię" required />
+        <input v-model="firstName" type="text" class="form-input" placeholder="Twoje imię" required />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Nazwisko</label>
+        <input v-model="lastName" type="text" class="form-input" placeholder="Twoje nazwisko" required />
       </div>
 
       <div class="form-group">
@@ -29,7 +34,8 @@ import { ref } from 'vue'
 import { useAuthStore } from '../../stores/auth'
 import { useRouter } from 'vue-router'
 
-const name = ref('')
+const firstName = ref('')
+const lastName = ref('')
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
@@ -40,7 +46,7 @@ const router = useRouter()
 const register = async () => {
   errorMessage.value = ''
   try {
-    await authStore.register(name.value, email.value, password.value)
+    await authStore.register(firstName.value, lastName.value, email.value, password.value)
     router.push('/dashboard')
   } catch {
     errorMessage.value = 'Coś poszło nie tak podczas rejestracji. Spróbuj ponownie.'
