@@ -10,7 +10,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     async function login(email, password) {
         try {
-            const res = await fetch('/api/login', {
+            const res = await fetch('http://localhost:8081/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -32,14 +32,14 @@ export const useAuthStore = defineStore('auth', () => {
 
     async function register(firstName, lastName, email, password) {
         try {
-            const res = await fetch('/api/register', {
+            const res = await fetch('http://localhost:8081/auth/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    first_name: firstName,
-                    last_name: lastName,
+                    firstName,
+                    lastName,
                     email,
                     password
                 })
@@ -47,10 +47,6 @@ export const useAuthStore = defineStore('auth', () => {
 
             if (!res.ok) throw new Error('Rejestracja nie powiodła się')
 
-            const data = await res.json()
-            token.value = data.token
-            localStorage.setItem('token', data.token)
-            user.value = data.user || null
         } catch (err) {
             console.error(err)
             throw err
