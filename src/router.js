@@ -21,12 +21,6 @@ const routes = [
         meta: { requiresGuest: true }
     },
     {
-        path: '/dashboard',
-        name: 'dashboard',
-        component: () => import('./views/DashboardView.vue'),
-        meta: { requiresAuth: true }
-    },
-    {
         path: '/tasks',
         name: 'tasks',
         component: () => import('./views/TasksView.vue'),
@@ -68,7 +62,7 @@ router.beforeEach(async (to, from, next) => {
     }
 
     if (to.meta.requiresGuest && isAuthenticated) {
-        return next('/dashboard')
+        return next('/tasks')
     }
 
     next()

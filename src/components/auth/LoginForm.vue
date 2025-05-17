@@ -47,7 +47,7 @@ const submitLogin = async () => {
   errorMessage.value = ''
   try {
     await authStore.login(email.value, password.value)
-    router.push('/dashboard')
+    router.push('/tasks')
   } catch {
     errorMessage.value = 'Nieprawidłowy email lub hasło'
   }
@@ -118,7 +118,7 @@ const submitLogin = async () => {
 }
 
 .error-message {
-  color: #dc2626; /* bardziej klasyczny czerwony dla błędu */
+  color: #dc2626;
   font-size: 0.95rem;
   text-align: center;
   margin-top: -0.5rem;

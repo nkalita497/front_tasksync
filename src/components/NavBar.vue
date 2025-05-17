@@ -27,7 +27,6 @@ import { useAuthStore } from '/src/stores/auth.js'
 const authStore = useAuthStore()
 
 const links = ref([
-  { path: '/dashboard', label: 'Dashboard' },
   { path: '/tasks', label: 'Zadania'},
   { path: '/users', label: 'Użytkownicy'}
 ])

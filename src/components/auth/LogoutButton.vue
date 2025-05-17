@@ -26,7 +26,7 @@ const logout = async () => {
 .logout-button {
   position: fixed;
   top: 1rem;
-  right: 1rem; /* Zmienione z left na right */
+  right: 1rem;
   padding: 0.5rem 1rem;
   background-color: #ef4444;
   color: white;
