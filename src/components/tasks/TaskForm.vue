@@ -109,7 +109,7 @@ select:focus {
 }
 
 button {
-  background-color: #3b82f6;
+  background-color: #dfe5ec;
   color: #fff;
   border: none;
   border-radius: 6px;

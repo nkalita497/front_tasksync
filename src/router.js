@@ -1,15 +1,55 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from './stores/auth'
 
-// Import komponentów widoków
-import LoginView from './views/AuthView.vue'
-import RegisterView from './views/AuthView.vue'
-import DashboardView from './views/DashboardView.vue'
-
 const routes = [
-    { path: '/', component: LoginView },
-    { path: '/register', component: RegisterView },
-    { path: '/dashboard', component: DashboardView }
+    {
+        path: '/',
+        name: 'welcome',
+        component: () => import('./views/WelcomeView.vue'),
+        meta: { requiresGuest: true }
+    },
+    {
+        path: '/login',
+        name: 'login',
+        component: () => import('./views/LoginView.vue'),
+        meta: { requiresGuest: true }
+    },
+    {
+        path: '/register',
+        name: 'register',
+        component: () => import('./views/RegisterView.vue'),
+        meta: { requiresGuest: true }
+    },
+    {
+        path: '/dashboard',
+        name: 'dashboard',
+        component: () => import('./views/DashboardView.vue'),
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/tasks',
+        name: 'tasks',
+        component: () => import('./views/TasksView.vue'),
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/users',
+        name: 'users',
+        component: () => import('./views/UsersView.vue'),
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/groups',
+        name: 'groups',
+        component: () => import('./views/GroupList.vue'),
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/profile',
+        name: 'profile',
+        component: () => import('./components/users/UserProfile.vue'),
+        meta: { requiresAuth: true }
+    }
 ]
 
 const router = createRouter({
@@ -17,13 +57,18 @@ const router = createRouter({
     routes
 })
 
-router.beforeEach((to, from, next) => {
-    const auth = useAuthStore()
-    const publicPages = ['/', '/register']
-    const authRequired = !publicPages.includes(to.path)
+router.beforeEach(async (to, from, next) => {
+    const authStore = useAuthStore()
 
-    if (authRequired && !auth.isAuthenticated) {
-        return next('/')
+
+    const isAuthenticated = authStore.isAuthenticated
+
+    if (to.meta.requiresAuth && !isAuthenticated) {
+        return next('/login')
+    }
+
+    if (to.meta.requiresGuest && isAuthenticated) {
+        return next('/dashboard')
     }
 
     next()

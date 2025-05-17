@@ -36,7 +36,7 @@ const links = ref([
 <style scoped>
 .sidebar {
   width: 16rem;
-  background-color: #fb923c;
+  background-color: #4382e4;
   color: white;
   padding: 1rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -56,8 +56,9 @@ const links = ref([
 }
 
 .sidebar-user {
-  color: #fcd34d;
+  color: rgba(16, 33, 248, 0.61);
   font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
 
 .sidebar-links {
@@ -77,17 +78,17 @@ const links = ref([
   text-decoration: none;
   color: white;
   transition: background-color 0.3s ease;
+  font-weight: 500;
 }
 
 .sidebar-link:hover {
-  background-color: #f97316;
+  background-color: #2141e4;
 }
 
-.active-link {
-  background-color: #ea580c;
-}
 
 .sidebar-icon {
   margin-right: 0.75rem;
 }
+
 </style>
+

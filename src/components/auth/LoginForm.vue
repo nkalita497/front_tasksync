@@ -67,7 +67,7 @@ const submitLogin = async () => {
 .login-title {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #f97316;
+  color: #1693f9;
   margin-bottom: 1.5rem;
 }
 
@@ -98,28 +98,31 @@ const submitLogin = async () => {
 }
 
 .form-input:focus {
-  border-color: #f97316;
-  box-shadow: 0 0 0 2px rgba(255, 145, 0, 0.4);
+  border-color: #1693f9;
+  box-shadow: 0 0 0 2px rgba(0, 21, 255, 0.61);
 }
 
 .login-button {
   padding: 0.75rem;
-  background-color: #f97316;
+  background-color: #1693f9;
   color: white;
   border-radius: 0.5rem;
   transition: background-color 0.3s;
   border: none;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .login-button:hover {
-  background-color: #ea580c;
+  background-color: #1281e0;
 }
 
 .error-message {
-  color: #dc2626;
+  color: #dc2626; /* bardziej klasyczny czerwony dla błędu */
   font-size: 0.95rem;
   text-align: center;
   margin-top: -0.5rem;
   margin-bottom: 0.5rem;
 }
+
 </style>

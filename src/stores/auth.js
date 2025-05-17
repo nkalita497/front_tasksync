@@ -16,7 +16,7 @@ export const useAuthStore = defineStore('auth', () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ email, password })
-            })
+            }) 
 
             if (!res.ok) throw new Error('Logowanie nie powiodło się')
 
