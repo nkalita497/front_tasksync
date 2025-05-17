@@ -1,5 +1,6 @@
 <template>
   <div class="board">
+    <!-- Kolumny tablicy -->
     <TaskColumn
         v-for="status in statuses"
         :key="status"
@@ -11,6 +12,7 @@
         @task-selected="openEditTask"
     />
 
+    <!-- Modal tworzenia / edycji zadania -->
     <TaskModal
         v-if="selectedTask"
         :task="selectedTask"
@@ -26,33 +28,49 @@ import TaskColumn from '@/components/tasks/TaskColumn.vue'
 import TaskModal from '@/components/tasks/TaskModal.vue'
 import { useTasksStore } from '@/stores/tasks'
 
+// ---------- STORE ----------
 const tasksStore = useTasksStore()
+// tasks to ref → w szablonie automatycznie się rozpakowuje
 const tasks = tasksStore.tasks
 
+// ---------- KONFIGURACJA KOLUMN ----------
 const statuses = ['todo', 'in-progress', 'done']
 const statusLabels = {
-  'todo': 'Do zrobienia',
+  todo: 'Do zrobienia',
   'in-progress': 'W trakcie',
-  'done': 'Zrobione'
+  done: 'Zrobione'
 }
 
-const selectedTask = ref(null)
+// ---------- STAN UI ----------
+const selectedTask = ref(null) // aktualnie edytowane / tworzone zadanie
 
+// ---------- HANDLERY ----------
+// Przeciągnięto i upuszczono zadanie do innej kolumny
 const onTaskDropped = ({ taskId, newStatus }) => {
-  const task = tasks.value.find(t => t.id === taskId)
+  // upewnij się, że porównujesz string‑to‑string
+  const task = tasks.value.find(t => String(t.id) === String(taskId))
   if (task && task.status !== newStatus) {
     tasksStore.updateTask({ ...task, status: newStatus })
   }
 }
 
+// Kliknięto „+” w kolumnie → tworzymy puste zadanie z domyślnym statusem
 const openTaskForm = (status) => {
-  selectedTask.value = { title: '', status, priority: 'medium' }
+  selectedTask.value = {
+    title: '',
+    description: '',
+    type: 'Task',
+    status,
+    priority: 'medium'
+  }
 }
 
+// Kliknięto istniejące zadanie → edycja
 const openEditTask = (task) => {
   selectedTask.value = { ...task }
 }
 
+// Zapis z modala (create lub update)
 const onTaskSave = (task) => {
   if (task.id) {
     tasksStore.updateTask(task)
@@ -69,47 +87,5 @@ const onTaskSave = (task) => {
   gap: 1rem;
   padding: 1rem;
   overflow-x: auto;
-}
-</style>
-
-<style scoped>
-.tasks-view {
-  padding: 2rem;
-}
-
-.add-button {
-  margin-top: 2rem;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-}
-
-.add-button:hover {
-  background: #2563eb;
-}
-
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-
-.modal {
-  background: white;
-  padding: 2rem;
-  border-radius: 0.5rem;
-  max-width: 500px;
-  width: 100%;
 }
 </style>

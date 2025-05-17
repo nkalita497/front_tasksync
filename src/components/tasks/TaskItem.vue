@@ -1,100 +1,150 @@
 <template>
-  <div class="task-item" :class="{ 'completed': task.completed }">
-    <input
-        type="checkbox"
-        :checked="task.completed"
-        @change="$emit('toggle', task.id)"
-        class="task-checkbox"
-    >
-    <div class="task-content">
-      <h3 class="task-title">{{ task.title }}</h3>
-      <p v-if="task.description" class="task-description">{{ task.description }}</p>
-      <div v-if="task.date || task.time" class="task-meta">
-        <span v-if="task.date" class="task-date">{{ formatDate(task.date) }}</span>
-        <span v-if="task.time" class="task-time">{{ task.time }}</span>
-      </div>
+  <div
+      class="task-item"
+      :class="[taskClass, { 'dragging': isDragging }]"
+      draggable="true"
+      @dragstart="startDrag"
+      @dragend="isDragging = false"
+      @click="selectTask"
+  >
+    <div class="task-header">
+      <span class="task-key">{{ taskKey }}</span>
+      <span class="task-type">{{ task.type || 'Task' }}</span>
     </div>
-    <button @click="$emit('delete', task.id)" class="delete-button">×</button>
+    <h4 class="task-title">{{ task.title }}</h4>
+    <div class="task-footer">
+      <span class="task-priority" :class="'priority-' + task.priority">
+        {{ priorityLabel }}
+      </span>
+    </div>
   </div>
 </template>
 
 <script setup>
+import { computed, ref } from 'vue'
+
+const emit = defineEmits(['task-selected'])
+
 const props = defineProps({
   task: {
     type: Object,
     required: true
-  }
+  },
+  index: Number
 })
 
-defineEmits(['toggle', 'delete'])
+const isDragging = ref(false)
 
-const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString('pl-PL')
+const taskKey = computed(() => `TASK-${props.index + 1}`)
+const priorityLabel = computed(() => {
+  const priorities = {
+    low: 'Niski',
+    medium: 'Średni',
+    high: 'Wysoki',
+  }
+  return priorities[props.task.priority] || props.task.priority
+})
+
+
+
+const startDrag = (e) => {
+  isDragging.value = true
+  e.dataTransfer.setData('taskId', props.task.id)
+  e.dataTransfer.effectAllowed = 'move'
+}
+
+const selectTask = () => {
+  emit('task-selected', props.task)
 }
 </script>
 
+
 <style scoped>
 .task-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1rem;
-  border-radius: 0.5rem;
   background: white;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-radius: 4px;
+  padding: 0.75rem;
+  box-shadow: 0 1px 1px rgba(9, 30, 66, 0.1);
   margin-bottom: 0.5rem;
-  transition: all 0.2s ease;
-}
-
-.task-item.completed {
-  opacity: 0.7;
-}
-
-.task-item.completed .task-title {
-  text-decoration: line-through;
-  color: #6b7280;
-}
-
-.task-checkbox {
-  margin-top: 0.3rem;
   cursor: pointer;
+  transition: all 0.2s;
+  border-left: 3px solid #dfe1e6;
 }
 
-.task-content {
-  flex: 1;
+.task-item:hover {
+  background: #f4f5f7;
+  box-shadow: 0 3px 5px rgba(9, 30, 66, 0.1);
+}
+
+.task-item.dragging {
+  opacity: 0.5;
+  background: #ebecf0;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.task-key {
+  font-size: 0.75rem;
+  color: #5e6c84;
+}
+
+.task-type {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  background: #dfe1e6;
+  color: #42526e;
 }
 
 .task-title {
-  margin: 0;
-  font-size: 1rem;
-  color: #1f2937;
-}
-
-.task-description {
-  margin: 0.5rem 0 0;
-  color: #4b5563;
+  margin: 0 0 0.75rem;
   font-size: 0.9rem;
+  color: #172b4d;
+  font-weight: 500;
 }
 
-.task-meta {
+.task-footer {
   display: flex;
-  gap: 1rem;
-  margin-top: 0.5rem;
-  font-size: 0.8rem;
-  color: #6b7280;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.delete-button {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: #ef4444;
-  cursor: pointer;
-  padding: 0 0.5rem;
-  line-height: 1;
+.task-priority {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
 }
 
-.delete-button:hover {
-  color: #dc2626;
+.priority-low {
+  background: #e3fcef;
+  color: #064;
+}
+
+.priority-medium {
+  background: #deebff;
+  color: #0747a6;
+}
+
+.priority-high {
+  background: #ffebe6;
+  color: #bf2600;
+}
+
+
+
+.task-bug {
+  border-left-color: #ff5630;
+}
+
+.task-story {
+  border-left-color: #6554c0;
+}
+
+.task-task {
+  border-left-color: #4c9aff;
 }
 </style>

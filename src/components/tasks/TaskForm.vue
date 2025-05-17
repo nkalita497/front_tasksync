@@ -1,6 +1,9 @@
 <template>
   <form @submit.prevent="submitTask" class="task-form">
-    <h2>Nowe zadanie</h2>
+    <div class="header">
+      <h2>{{ isEditMode ? 'Edytuj zadanie' : 'Nowe zadanie' }}</h2>
+      <button type="button" class="close-button" @click="$emit('close')">×</button>
+    </div>
 
     <div class="form-group">
       <label>Tytuł:</label>
@@ -22,42 +25,90 @@
     </div>
 
     <div class="form-group">
+      <label>Status:</label>
+      <select v-model="status">
+        <option value="todo">Do zrobienia</option>
+        <option value="in-progress">W trakcie</option>
+        <option value="done">Zrobione</option>
+      </select>
+    </div>
+
+    <div class="form-group">
       <label>Przypisz do:</label>
       <input v-model="assignedTo" placeholder="Imię lub e-mail" />
     </div>
 
-    <button type="submit">Dodaj zadanie</button>
+    <button type="submit">{{ isEditMode ? 'Zapisz zmiany' : 'Dodaj zadanie' }}</button>
   </form>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useTasksStore } from '@/stores/tasks'
 
-const { addTask } = useTasksStore()
+const props = defineProps({
+  taskToEdit: Object,
+  visible: Boolean
+})
+
+const emit = defineEmits(['close'])
+
+const tasksStore = useTasksStore()
 
 const title = ref('')
 const description = ref('')
 const priority = ref('medium')
 const assignedTo = ref('')
+const id = ref(null)
+const status = ref('todo')
+
+const isEditMode = computed(() => !!props.taskToEdit)
+
+watch(
+    () => props.taskToEdit,
+    (task) => {
+      if (task) {
+        title.value = task.title
+        description.value = task.description
+        priority.value = task.priority || 'medium'
+        assignedTo.value = task.assignedTo || ''
+        id.value = task.id
+        status.value = task.status || 'todo'
+      } else {
+        clearForm()
+      }
+    },
+    { immediate: true }
+)
 
 function submitTask() {
-  const newTask = {
-    id: Date.now(),
+  const taskData = {
+    id: id.value || Date.now().toString(),
     title: title.value,
     description: description.value,
     priority: priority.value,
     assignedTo: assignedTo.value,
+    status: status.value,
     completed: false
   }
 
-  addTask(newTask)
+  if (isEditMode.value) {
+    tasksStore.updateTask(taskData)
+  } else {
+    tasksStore.addTask(taskData)
+  }
 
-  // Wyczyść formularz
+  clearForm()
+  emit('close')
+}
+
+function clearForm() {
   title.value = ''
   description.value = ''
   priority.value = 'medium'
   assignedTo.value = ''
+  id.value = null
+  status.value = 'todo'
 }
 </script>
 
@@ -70,13 +121,31 @@ function submitTask() {
   margin: 0 auto;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   font-family: 'Segoe UI', sans-serif;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.close-button {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #888;
+}
+
+.close-button:hover {
+  color: #000;
 }
 
 .task-form h2 {
-  margin-bottom: 16px;
   font-size: 20px;
   color: #333;
-  text-align: center;
 }
 
 .form-group {
@@ -108,8 +177,8 @@ select:focus {
   outline: none;
 }
 
-button {
-  background-color: #dfe5ec;
+button[type="submit"] {
+  background-color: #3b82f6;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -120,7 +189,7 @@ button {
   transition: background-color 0.2s;
 }
 
-button:hover {
+button[type="submit"]:hover {
   background-color: #2563eb;
 }
 </style>
