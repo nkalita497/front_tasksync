@@ -3,25 +3,27 @@
     <h2 class="login-title">Logowanie</h2>
     <form @submit.prevent="submitLogin" class="login-form">
       <div class="form-group">
-        <label class="form-label">Email</label>
+
         <input
             v-model="email"
             type="email"
             class="form-input"
-            placeholder="twój@email.com"
+            placeholder=" "
             required
         />
+        <label class="form-label">Email</label>
       </div>
 
       <div class="form-group">
-        <label class="form-label">Hasło</label>
+
         <input
             v-model="password"
             type="password"
             class="form-input"
-            placeholder="••••••••"
+            placeholder=" "
             required
         />
+        <label class="form-label">Hasło</label>
       </div>
 
       <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
@@ -56,19 +58,17 @@ const submitLogin = async () => {
 
 <style scoped>
 .login-container {
-  max-width: 400px;
-  margin: 2rem auto;
-  background-color: white;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
+  width: 400px;
+  margin: auto;
+  height: fit-content;
 }
 
 .login-title {
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: bold;
   color: #1693f9;
-  margin-bottom: 1.5rem;
+  margin-bottom: 3rem;
+  text-align: center;
 }
 
 .login-form {
@@ -78,39 +78,62 @@ const submitLogin = async () => {
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
+  position: relative;
+  border: 1px solid #d1d5db;
+  padding: 14px 20px 6px;
+  border-radius: 3px;
+  transition: border-color 0.3s;
+  height: 40px;
 }
 
 .form-label {
+  position: absolute;
   font-size: 1rem;
-  color: #374151;
-  margin-bottom: 0.25rem;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  transition: all 0.2s ease-out;
+  padding: 0 0 0 9px;
+  color: #999;
+  pointer-events: none;
 }
 
 .form-input {
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  color: #374151;
+  width: 100%;
+  border: none;
   outline: none;
+  font-size: 16px;
+  padding: 6px 0;
+  background: transparent;
+  margin-top: 10px; /* im większy tym niżej będzie input */
 }
 
-.form-input:focus {
+.form-group:focus-within {
   border-color: #1693f9;
-  box-shadow: 0 0 0 2px rgba(0, 21, 255, 0.61);
+  box-shadow: 0 0 0 1px rgba(0, 21, 255, 0.61);
+}
+
+.form-input:focus + .form-label,
+.form-input:not(:placeholder-shown) + .form-label,
+.form-input:valid + .form-label {
+  top: 15px; /*im mniejsze tym wyżej będzie label po kliknięciu */
+  left: 10px;
+  font-size: 12px;
+
 }
 
 .login-button {
   padding: 0.75rem;
   background-color: #1693f9;
   color: white;
-  border-radius: 0.5rem;
+  border-radius: 3px;
+  font-weight: 600;
   transition: background-color 0.3s;
   border: none;
-  font-weight: 600;
   cursor: pointer;
+  font-size: 1rem;
+  margin-top: 2rem;
+  height: 60px;
 }
 
 .login-button:hover {

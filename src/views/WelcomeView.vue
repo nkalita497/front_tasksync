@@ -1,13 +1,13 @@
 <!-- src/views/WelcomeView.vue -->
 <template>
   <div class="welcome-container">
-    <h1 class="welcome-title">Witaj w naszej aplikacji!</h1>
-    <p class="welcome-subtitle">Co chcesz teraz zrobić?</p>
+    <img class="logo" src="../assets/TaskSyncLogo.svg" alt="Logo">
 
     <div class="welcome-actions">
       <router-link to="/login" class="welcome-button login-button">Zaloguj się</router-link>
       <router-link to="/register" class="welcome-button register-button">Zarejestruj się</router-link>
     </div>
+    <p class="creators">Created by: Julia Staniszewska, Natalia Kalita, Taras Pryimachuk</p>
   </div>
 </template>
 
@@ -20,10 +20,24 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 100%;
   background-color: #f4f4f9;
   text-align: center;
-  padding: 2rem;
+  padding: 0;
+}
+
+.logo{
+  width: 35%;
+  padding-bottom: 30px;
+}
+
+.creators{
+  font-size: 14px;
+  color: #05365b;
+  position: absolute;
+  bottom: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .welcome-title {
@@ -40,6 +54,7 @@
 
 .welcome-actions {
   display: flex;
+  justify-content: center;
   gap: 1rem;
   margin-top: 1rem;
 }
@@ -51,6 +66,7 @@
   text-decoration: none;
   transition: all 0.3s ease;
   border: 2px solid transparent;
+
 }
 
 .login-button {
@@ -73,9 +89,16 @@
 }
 
 @media (max-width: 768px) {
+  .logo{
+    width: 70%;
+    padding-bottom: 30px;
+  }
+
   .welcome-actions {
+    display: flex;
     flex-direction: column;
-    width: 100%;
+    align-items: center;
+    width: 40%;
   }
 
   .welcome-button {

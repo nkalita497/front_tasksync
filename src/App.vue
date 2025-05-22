@@ -39,17 +39,20 @@ onMounted(() => {
 </script>
 
 <style>
+
 .container {
   display: flex;
-  min-height: 100vh;
+  min-height: 100%;
   background-color: #faf5e6;
   position: relative;
+  height: 100%;
+  width: 100%;
 }
 
 .main-content {
   flex: 1;
-  padding: 1.5rem;
   transition: all 0.3s ease-in-out;
-  margin-left: 16rem;
+  padding: 0;
+  height: 100%;
 }
 </style>

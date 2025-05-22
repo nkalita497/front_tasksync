@@ -1,25 +1,25 @@
 <template>
   <div class="register-container">
-    <h2 class="register-title">Rejestracja</h2>
+    <h2 class="register-title">Zarejestruj się</h2>
     <form @submit.prevent="register" class="register-form">
       <div class="form-group">
+        <input v-model="firstName" type="text" class="form-input" placeholder=" " required />
         <label class="form-label">Imię</label>
-        <input v-model="firstName" type="text" class="form-input" placeholder="Twoje imię" required />
       </div>
 
       <div class="form-group">
+        <input v-model="lastName" type="text" class="form-input" placeholder=" " required />
         <label class="form-label">Nazwisko</label>
-        <input v-model="lastName" type="text" class="form-input" placeholder="Twoje nazwisko" required />
       </div>
 
       <div class="form-group">
+        <input v-model="email" type="email" class="form-input" placeholder=" " required />
         <label class="form-label">Email</label>
-        <input v-model="email" type="email" class="form-input" placeholder="twój@email.com" required />
       </div>
 
       <div class="form-group">
+        <input v-model="password" type="password" class="form-input" placeholder=" " required />
         <label class="form-label">Hasło</label>
-        <input v-model="password" type="password" class="form-input" placeholder="••••••••" required />
       </div>
 
       <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
@@ -60,20 +60,18 @@ const register = async () => {
 </script>
 
 <style scoped>
+
 .register-container {
-  max-width: 400px;
-  margin: 2rem auto;
-  background-color: white;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
+  width: 400px;
+  margin: auto;
+  height: fit-content;
 }
 
 .register-title {
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: bold;
   color: #1693f9;
-  margin-bottom: 1.5rem;
+  margin-bottom: 3rem;
   text-align: center;
 }
 
@@ -84,41 +82,64 @@ const register = async () => {
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
+  position: relative;
+  border: 1px solid #d1d5db;
+  padding: 14px 20px 6px;
+  border-radius: 3px;
+  transition: border-color 0.3s;
+  height: 40px;
+
 }
 
 .form-label {
+  position: absolute;
   font-size: 1rem;
-  color: #374151;
-  margin-bottom: 0.25rem;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  transition: all 0.2s ease-out;
+  padding: 0 0 0 9px;
+  color: #999;
+  pointer-events: none;
 }
 
 .form-input {
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  color: #374151;
+  width: 100%;
+  border: none;
   outline: none;
+  font-size: 16px;
+  padding: 6px 0;
+  background: transparent;
+  margin-top: 10px; /* im większy tym niżej będzie input */
 }
 
-.form-input:focus {
+.form-group:focus-within {
   border-color: #1693f9;
-  box-shadow: 0 0 0 2px rgba(0, 21, 255, 0.61);
+  box-shadow: 0 0 0 1px rgba(0, 21, 255, 0.61);
 }
+
+.form-input:focus + .form-label,
+.form-input:not(:placeholder-shown) + .form-label,
+.form-input:valid + .form-label {
+  top: 15px; /*im mniejsze tym wyżej będzie label po kliknięciu */
+  left: 10px;
+  font-size: 12px;
+
+}
+
 
 .register-button {
   padding: 0.75rem;
   background-color: #1693f9;
   color: white;
-  border-radius: 0.5rem;
+  border-radius: 3px;
   font-weight: 600;
   transition: background-color 0.3s;
   border: none;
   cursor: pointer;
   font-size: 1rem;
-  margin-top: 0.5rem;
+  margin-top: 2rem;
+  height: 60px;
 }
 
 .register-button:hover {
@@ -133,4 +154,19 @@ const register = async () => {
   margin-bottom: 0.5rem;
 }
 
+.login-link a{
+  text-decoration: none;
+  color: #1281e0;
+  font-weight: bold;
+}
+
+
+@media (max-width: 768px) {
+  .register-container{
+    width: 80%;
+    background: transparent;
+    box-shadow: none;
+  }
+
+}
 </style>
