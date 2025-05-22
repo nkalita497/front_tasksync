@@ -15,7 +15,7 @@ const router = useRouter()
 const logout = async () => {
   try {
     await authStore.logout()
-    router.push('/login')
+    router.push('/')
   } catch (error) {
     console.error('Błąd podczas wylogowywania:', error)
   }
