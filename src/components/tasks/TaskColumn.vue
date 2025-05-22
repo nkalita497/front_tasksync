@@ -76,13 +76,15 @@ const handleDrop = (e) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #adb6d2;
 }
 
 .column-header h3 {
   margin: 0;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #5e6c84;
+  color: #1e293c;
   text-transform: uppercase;
   display: flex;
   align-items: center;
@@ -90,10 +92,9 @@ const handleDrop = (e) => {
 }
 
 .task-count {
-  background: #dfe1e6;
-  color: #5e6c84;
-  border-radius: 50%;
-  width: 20px;
+  border-radius: 13px;
+  border: 1px solid #4d5c75;
+  width: 30px;
   height: 20px;
   display: inline-flex;
   align-items: center;
@@ -104,8 +105,8 @@ const handleDrop = (e) => {
 .add-task {
   background: none;
   border: none;
-  color: #5e6c84;
-  font-size: 1.2rem;
+  color: #75849b;
+  font-size: 35px;
   cursor: pointer;
   width: 24px;
   height: 24px;
@@ -121,13 +122,15 @@ const handleDrop = (e) => {
 }
 
 .task-list {
+  background-color: #d9def1;
+  border-radius: 8px;
   flex: 1;
   overflow-y: auto;
   padding: 0.5rem;
   margin-top: 0.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 5px;
 }
 
 .empty-state {
@@ -135,11 +138,13 @@ const handleDrop = (e) => {
   font-size: 0.85rem;
   text-align: center;
   padding: 1rem;
-  background: #ebecf0;
   border-radius: 4px;
 }
 
+
 /* Kolory kolumn */
+
+/*
 .status-todo {
   border-top: 4px solid #deebff;
 }
@@ -155,4 +160,7 @@ const handleDrop = (e) => {
 .status-done {
   border-top: 4px solid #e3fcef;
 }
+
+ */
+
 </style>

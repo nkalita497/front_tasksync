@@ -1,22 +1,11 @@
 <template>
   <nav class="sidebar">
     <div class="sidebar-header">
-      <h1 class="sidebar-title">TaskSync</h1>
-      <p class="sidebar-user">Witaj, {{ authStore.user?.name }}</p>
+      <img class="sidebar-logo" src="../assets/TaskSyncLogo.svg" alt="Logo">
+      <p class="sidebar-user">Witaj, {{ authStore.user?.firstName }}</p>
     </div>
 
-    <ul class="sidebar-links">
-      <li v-for="link in links" :key="link.path" class="sidebar-item">
-        <router-link
-            :to="link.path"
-            class="sidebar-link"
-            active-class="active-link"
-        >
-          <span class="sidebar-icon">{{ link.icon }}</span>
-          {{ link.label }}
-        </router-link>
-      </li>
-    </ul>
+
 
     <div class="team-selector-bottom">
       <div class="team-select-header" @click="toggleTeamDropdown">
@@ -43,6 +32,20 @@
         </div>
       </div>
     </div>
+
+
+    <ul class="sidebar-links">
+      <li v-for="link in links" :key="link.path" class="sidebar-item">
+        <router-link
+            :to="link.path"
+            class="sidebar-link"
+            active-class="active-link"
+        >
+          <span class="sidebar-icon">{{ link.icon }}</span>
+          {{ link.label }}
+        </router-link>
+      </li>
+    </ul>
   </nav>
 </template>
 
@@ -84,57 +87,79 @@ const openCreateTeamModal = () => {
 
 <style scoped>
 .sidebar {
-  width: 16rem;
-  background-color: #4382e4;
-  color: white;
-  padding: 1rem;
+  width: 250px;
+  padding: 0;
+  background-color: #f4f4f9;
+  color: black;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  height: 100vh;
+  height: 100%;
   position: sticky;
   top: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
 }
 
 .sidebar-header {
-  margin-bottom: 2rem;
+  width: 85%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: fit-content;
 }
 
-.sidebar-title {
-  font-size: 1.5rem;
-  font-weight: bold;
+.sidebar-logo {
+  max-width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+
 }
 
 .sidebar-user {
-  color: rgba(255, 255, 255, 0.85);
   font-size: 0.875rem;
-  margin-top: 0.25rem;
+  width: fit-content;
+  max-width: 100%;
+  color: #273756;
+  margin: 0;
 }
 
 .sidebar-links {
   list-style-type: none;
+  width: 86%;
   padding: 0;
-  flex-grow: 1;
+  flex-grow: 0.5;
 }
 
 .sidebar-item {
-  margin-bottom: 0.5rem;
+  font-size: 15px;
+  font-weight: normal;
+  margin-bottom: 15px;
+
+
 }
 
 .sidebar-link {
+  height: 15px;
   display: flex;
   align-items: center;
   padding: 0.75rem;
-  border-radius: 0.375rem;
+  border: 1px solid transparent;
+  border-radius: 5px;
   text-decoration: none;
-  color: white;
-  transition: background-color 0.3s ease;
-  font-weight: 500;
+  transition: all 0.5s ease;
+  font-weight: 400;
+  color: #273756;
+}
+
+.active-link{
+  border: 1px solid #273756;
+  background-color: #dde2f3;
+
 }
 
 .sidebar-link:hover {
-  background-color: #2141e4;
+  background-color: #dbe0f2;
 }
 
 .sidebar-icon {
@@ -145,22 +170,24 @@ const openCreateTeamModal = () => {
 .team-selector-bottom {
   margin-top: 1rem;
   position: relative;
+  width: 100%;
+  margin-bottom: 30px;
 }
 
 .team-select-header {
   padding: 0.75rem;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 0.375rem;
+  background-color: rgb(219, 224, 242);
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
   transition: background-color 0.2s;
+  height: 40px;
+  font-weight: 400;
+  color: #273756;
 }
 
-.team-select-header:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-}
+
 
 .dropdown-icon {
   font-size: 0.8rem;
@@ -171,45 +198,53 @@ const openCreateTeamModal = () => {
   top: 100%;
   left: 0;
   right: 0;
-  background-color: #2c6bdb;
-  border-radius: 0.375rem;
+  background-color: #d9def1;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 10;
-  margin-top: 0.5rem;
+  margin-top: 4px;
   overflow: hidden;
+
 }
 
 .team-item {
+  display: flex;
+  align-items: center;
   padding: 0.75rem;
+  font-weight: 400;
   cursor: pointer;
   transition: background-color 0.2s;
+  height: 40px;
+
 }
 
 .team-item:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  font-weight: 500;
 }
 
 .active-team {
-  background-color: rgba(255, 255, 255, 0.2);
-  font-weight: 600;
+  background-color: rgb(217, 222, 241);
+  font-weight: 500;
 }
 
 .personal-badge {
   font-size: 0.7rem;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgb(242, 242, 248);
   padding: 0.2rem 0.4rem;
   border-radius: 0.75rem;
   margin-left: 0.5rem;
 }
 
 .team-divider {
-  height: 1px;
-  background-color: rgba(255, 255, 255, 0.1);
-  margin: 0.25rem 0;
+  height: 4px;
+  background-color: rgb(242, 242, 248);
 }
 
 .create-team {
-  color: #a0c4ff;
+  display: flex;
+  align-items: center;
+  color: #151610;
+  background-color: #c9cfe7;
   font-weight: 500;
+  height: 40px;
 }
 </style>

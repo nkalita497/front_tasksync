@@ -135,30 +135,30 @@ h3 {
     background-color: var(--primary-hover);
 }
 
-.sidebar {
-    width: 16rem;
-    background-color: var(--primary-color);
-    color: var(--white);
-    padding: 1rem;
-    box-shadow: var(--shadow-md);
-    position: sticky;
-    top: 0;
-    height: 100vh;
-}
+/*.sidebar {*/
+/*    width: 16rem;*/
+/*    background-color: var(--primary-color);*/
+/*    color: var(--white);*/
+/*    padding: 1rem;*/
+/*    box-shadow: var(--shadow-md);*/
+/*    position: sticky;*/
+/*    top: 0;*/
+/*    height: 100vh;*/
+/*}*/
 
-.sidebar-header {
-    padding: 0.5rem;
-    margin-bottom: 2rem;
-}
+/*.sidebar-header {*/
+/*    padding: 0.5rem;*/
+/*    margin-bottom: 2rem;*/
+/*}*/
 
-.sidebar-header h1 {
-    font-size: 1.5rem;
-}
+/*.sidebar-header h1 {*/
+/*    font-size: 1.5rem;*/
+/*}*/
 
-.sidebar-header p {
-    color: #fed7aa;
-    font-size: 0.875rem;
-}
+/*.sidebar-header p {*/
+/*    color: #fed7aa;*/
+/*    font-size: 0.875rem;*/
+/*}*/
 
 .nav-link {
     display: flex;

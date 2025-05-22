@@ -64,11 +64,10 @@ const selectTask = () => {
   background: white;
   border-radius: 4px;
   padding: 0.75rem;
-  box-shadow: 0 1px 1px rgba(9, 30, 66, 0.1);
+  box-shadow: 2px 4px 0 rgba(9, 30, 66, 0.1);
   margin-bottom: 0.5rem;
   cursor: pointer;
   transition: all 0.2s;
-  border-left: 3px solid #dfe1e6;
 }
 
 .task-item:hover {

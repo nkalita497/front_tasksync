@@ -24,16 +24,21 @@
 
 <style>
 .users-container {
-  padding: 2rem;
+  padding: 0;
+  background-color: #f4f4f9;
+  height: 100%;
 }
 
 .header {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
+  margin: 0;
+  font-size: 30px;
+  color: #1e293b;
+  padding: 30px 30px 35px;
+  border-bottom: 1px solid #adb6d2;
 }
 
 .user-list {
+  padding: 15px;
   display: flex;
   flex-direction: column;
   gap: 1rem;

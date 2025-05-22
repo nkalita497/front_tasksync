@@ -1,7 +1,7 @@
 <template>
   <button @click="logout" class="logout-button">
-    <span class="logout-icon"></span>
-    Wyloguj
+<!--    <span class="logout-icon"></span>-->
+    Wyloguj się
   </button>
 </template>
 
@@ -28,7 +28,7 @@ const logout = async () => {
   top: 1rem;
   right: 1rem;
   padding: 0.5rem 1rem;
-  background-color: #ef4444;
+  background-color: #0d7ffd;
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -44,9 +44,9 @@ const logout = async () => {
 }
 
 .logout-button:hover {
-  background-color: #dc2626;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background-color: #5fa7f1;
+  //transition: color 0.4s ease;
+  //box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .logout-button:active {

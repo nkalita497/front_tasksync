@@ -6,7 +6,7 @@
         Twój osobisty obszar zadań
       </p>
       <p v-else class="team-description">
-        Zespół: {{ teamStore.currentTeam.name }}
+        Zespół: {{ teamStore.currentTeam.description }}
       </p>
     </div>
 
@@ -94,28 +94,28 @@ const onTaskSave = (task) => {
 
 <style scoped>
 .tasks-container {
-  padding: 1.5rem;
+  padding: 0;
   height: 100%;
   display: flex;
   flex-direction: column;
+  background-color: #f4f4f9;
 }
 
 .team-header {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 15px 30px 20px;
+  border-bottom: 1px solid #adb6d2;
 }
 
 .team-header h2 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 30px;
   color: #1e293b;
 }
 
 .team-description {
   margin: 0.5rem 0 0;
   color: #64748b;
-  font-size: 0.9rem;
+  font-size: 15px;
 }
 
 .board {
@@ -123,7 +123,7 @@ const onTaskSave = (task) => {
   gap: 1rem;
   flex: 1;
   overflow-x: auto;
-  padding-bottom: 1rem;
+  padding: 15px;
 }
 
 @media (max-width: 768px) {
