@@ -11,26 +11,17 @@
         @add-task="openTaskForm"
         @task-selected="openEditTask"
     />
-
-    <!-- Modal tworzenia / edycji zadania -->
-    <TaskModal
-        v-if="selectedTask"
-        :task="selectedTask"
-        @close="selectedTask = null"
-        @save="onTaskSave"
-    />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import TaskColumn from '@/components/tasks/TaskColumn.vue'
-import TaskModal from '@/components/tasks/TaskModal.vue'
 import { useTasksStore } from '@/stores/tasks'
+import { useModalStore } from '@/stores/modal'
+import TaskColumn from '@/components/tasks/TaskColumn.vue'
 
-// ---------- STORE ----------
+// ---------- STORES ----------
 const tasksStore = useTasksStore()
-// tasks to ref → w szablonie automatycznie się rozpakowuje
+const modalStore = useModalStore()
 const tasks = tasksStore.tasks
 
 // ---------- KONFIGURACJA KOLUMN ----------
@@ -41,43 +32,34 @@ const statusLabels = {
   done: 'Zrobione'
 }
 
-// ---------- STAN UI ----------
-const selectedTask = ref(null) // aktualnie edytowane / tworzone zadanie
-
 // ---------- HANDLERY ----------
-// Przeciągnięto i upuszczono zadanie do innej kolumny
+
+// Przeciągnięto i upuszczono zadanie
 const onTaskDropped = ({ taskId, newStatus }) => {
-  // upewnij się, że porównujesz string‑to‑string
   const task = tasks.value.find(t => String(t.id) === String(taskId))
   if (task && task.status !== newStatus) {
     tasksStore.updateTask({ ...task, status: newStatus })
   }
 }
 
-// Kliknięto „+” w kolumnie → tworzymy puste zadanie z domyślnym statusem
+// Kliknięto „+” w kolumnie → tworzymy nowe zadanie
 const openTaskForm = (status) => {
-  selectedTask.value = {
-    title: '',
-    description: '',
-    type: 'Task',
-    status,
-    priority: 'medium'
-  }
+  modalStore.openModal('Task', {
+    mode: 'create',
+    task: {
+      title: '',
+      description: '',
+      status,
+      priority: 'medium'
+    }
+  })
 }
 
-// Kliknięto istniejące zadanie → edycja
 const openEditTask = (task) => {
-  selectedTask.value = { ...task }
-}
-
-// Zapis z modala (create lub update)
-const onTaskSave = (task) => {
-  if (task.id) {
-    tasksStore.updateTask(task)
-  } else {
-    tasksStore.addTask(task)
-  }
-  selectedTask.value = null
+  modalStore.openModal('Task', {
+    mode: 'edit',
+    task: { ...task }
+  })
 }
 </script>
 

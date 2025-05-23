@@ -34,9 +34,11 @@ export const useTasksStore = defineStore('tasks', () => {
 
     function addTask(task) {
         const newTask = {
+            type: 'Task', // Domyślny typ
             ...task,
             id: Date.now().toString(),
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
         }
         tasks.value.push(newTask)
         return newTask

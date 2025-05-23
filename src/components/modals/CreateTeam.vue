@@ -7,15 +7,30 @@
       </div>
 
       <div class="modal-body">
+        <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+        <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
+
         <div class="form-group">
           <label>Nazwa zespołu:</label>
           <input
-              v-model="teamName"
+              v-model="formData.teamName"
               class="form-control"
               placeholder="Nazwa zespołu"
-              @keyup.enter="createTeam"
+              required
           />
         </div>
+
+        <div class="form-group">
+          <label>Opis (opcjonalny):</label>
+          <textarea
+              v-model="formData.description"
+              class="form-control"
+              rows="3"
+              placeholder="Krótki opis zespołu"
+          ></textarea>
+        </div>
+
+        <!-- Usunięto sekcję z członkami, ponieważ backend tego nie obsługuje -->
       </div>
 
       <div class="modal-footer">
@@ -23,10 +38,10 @@
         <button
             class="btn-save"
             @click="createTeam"
-            :disabled="!teamName"
-            :class="{ 'disabled': !teamName }"
+            :disabled="!formData.teamName || loading"
+            :class="{ 'disabled': !formData.teamName || loading }"
         >
-          Utwórz
+          {{ loading ? 'Tworzenie...' : 'Utwórz zespół' }}
         </button>
       </div>
     </div>
@@ -36,21 +51,62 @@
 <script setup>
 import { ref } from 'vue'
 import { useTeamStore } from '/src/stores/team.js'
+import { useAuthStore } from '@/stores/auth'
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'team-created'])
 const teamStore = useTeamStore()
-const teamName = ref('')
+const authStore = useAuthStore()
+
+const formData = ref({
+  teamName: '',
+  description: ''
+})
+
+const loading = ref(false)
+const errorMessage = ref('')
+const successMessage = ref('')
 
 const createTeam = async () => {
-  if (!teamName.value) return
+  if (!formData.value.teamName) return
+
+  loading.value = true
+  errorMessage.value = ''
+  successMessage.value = ''
 
   try {
-    const newTeam = await api.post('/teams', { name: teamName.value })
+    const response = await fetch('http://localhost:8081/teams/create-team', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authStore.token}`
+      },
+      body: JSON.stringify({
+        teamName: formData.value.teamName,
+        description: formData.value.description
+        // Nie wysyłamy już userIds, ponieważ backend tego nie obsługuje
+      })
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.message || 'Nie udało się utworzyć zespołu')
+    }
+
+    const newTeam = await response.json()
+    successMessage.value = 'Zespół został pomyślnie utworzony!'
+
     await teamStore.fetchTeams()
     teamStore.setCurrentTeam(newTeam.id)
-    emit('close')
+
+    setTimeout(() => {
+      emit('team-created', newTeam)
+      emit('close')
+    }, 1500)
   } catch (error) {
     console.error('Błąd tworzenia zespołu:', error)
+    errorMessage.value = error.message || 'Wystąpił błąd podczas tworzenia zespołu'
+  } finally {
+    loading.value = false
   }
 }
 </script>
@@ -73,7 +129,7 @@ const createTeam = async () => {
   background: white;
   border-radius: 8px;
   width: 100%;
-  max-width: 450px;
+  max-width: 500px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
@@ -137,6 +193,11 @@ const createTeam = async () => {
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
+textarea.form-control {
+  min-height: 80px;
+  resize: vertical;
+}
+
 .modal-footer {
   padding: 1rem 1.5rem;
   border-top: 1px solid #e2e8f0;
@@ -170,12 +231,30 @@ const createTeam = async () => {
   color: white;
 }
 
-.btn-save:hover {
+.btn-save:hover:not(.disabled) {
   background: #2563eb;
 }
 
 .btn-save.disabled {
   background: #cbd5e1;
   cursor: not-allowed;
+}
+
+.error-message {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: #fef2f2;
+  border-radius: 6px;
+}
+
+.success-message {
+  color: #16a34a;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: #f0fdf4;
+  border-radius: 6px;
 }
 </style>

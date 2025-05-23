@@ -1,4 +1,10 @@
-
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden; /* Zapobiega poziomej scrollbarce */
+}
 :root {
     --primary-color: #ea580c;
     --primary-hover: #c2410c;
@@ -272,6 +278,7 @@ h3 {
 .animate-fade-in {
     animation: fadeIn 0.5s ease-in-out;
 }
+
 
 @media (max-width: 768px) {
     #app {
