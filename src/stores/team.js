@@ -1,41 +1,44 @@
-import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import { useAuthStore } from './auth'
+import {defineStore} from 'pinia'
+import {computed, ref} from 'vue'
+import {useAuthStore} from './auth'
 
 export const useTeamStore = defineStore('team', () => {
     const authStore = useAuthStore()
-    const teams = ref([])
     const currentTeamId = ref(null)
+    const bearer = 'Bearer ' + localStorage.getItem("token");
+    const allTeams = ref([])
 
-    // Domyślny zespół jednoosobowy
-    const defaultPersonalTeam = computed(() => ({
-        id: 'personal',
-        name: `${authStore.user?.name || 'Moje'} zadania`,
-        isPersonal: true
-    }))
+    const currentTeamName = computed( () => {
+        console.log(currentTeamId.value)
 
-    // Aktualnie wybrany zespół
-    const currentTeam = computed(() => {
-        if (currentTeamId.value === 'personal') return defaultPersonalTeam.value
-        return teams.value.find(team => team.id === currentTeamId.value) || defaultPersonalTeam.value
+
+        if(currentTeamId.value === undefined || currentTeamId.value === null) {
+            console.log("Ładuje")
+            fetchTeams()
+            return allTeams.value.find(team => team.id === 0)?.teamName || 'Ładowanie...'
+        }
+        console.log("Nie Ładuje")
+        return allTeams.value.find(team => team.id === currentTeamId.value)?.teamName || 'Ładowanie...'
     })
-
-    // Wszystkie zespoły wraz z domyślnym
-    const allTeams = computed(() => [
-        defaultPersonalTeam.value,
-        ...teams.value
-    ])
 
     // Pobierz zespoły użytkownika z API
     async function fetchTeams() {
         try {
-            const response = await api.get('/teams')
-            teams.value = response.data
+            const res = await fetch('http://localhost:8081/teams', {
+                method: 'GET',
+                headers: {
+                    'Authorization': bearer
+                }
+            })
+            const data = await res.json()
+            allTeams.value = data
 
-            // Jeśli nie ma wybranego teamu, ustaw domyślny
-            if (!currentTeamId.value) {
-                currentTeamId.value = 'personal'
+            // Jeśli nie ustawiono zespołu, ustaw pierwszy
+            if (!currentTeamId.value && data.length > 0) {
+                console.log("Ustawiam")
+                setCurrentTeam(data[0].id)
             }
+
         } catch (error) {
             console.error('Błąd pobierania zespołów:', error)
         }
@@ -47,22 +50,12 @@ export const useTeamStore = defineStore('team', () => {
         localStorage.setItem('selectedTeam', teamId) // Zapisz wybór
     }
 
-    // Inicjalizacja - wczytaj zapisany zespół
-    function init() {
-        const savedTeam = localStorage.getItem('selectedTeam')
-        if (savedTeam) {
-            currentTeamId.value = savedTeam
-        }
-        fetchTeams()
-    }
 
     return {
-        teams,
-        currentTeam,
         currentTeamId,
         allTeams,
         fetchTeams,
         setCurrentTeam,
-        init
+        currentTeamName
     }
 })

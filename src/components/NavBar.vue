@@ -6,10 +6,10 @@
     </div>
 
 
-
     <div class="team-selector-bottom">
       <div class="team-select-header" @click="toggleTeamDropdown">
-        <span>{{ teamStore.currentTeam.name }}</span>
+
+        <span>{{ teamStore.currentTeamName }}</span>
         <span class="dropdown-icon">{{ isTeamDropdownOpen ? '▲' : '▼' }}</span>
       </div>
 
@@ -21,8 +21,8 @@
             :class="{ 'active-team': team.id === teamStore.currentTeamId }"
             @click="selectTeam(team.id)"
         >
-          {{ team.name }}
-          <span v-if="team.isPersonal" class="personal-badge">Osobiste</span>
+          {{ team.teamName }}
+<!--          <span v-if="team.isPersonal" class="personal-badge">Osobiste</span>-->
         </div>
 
         <div class="team-divider"></div>
@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import {ref, onMounted, onBeforeMount} from 'vue'
 import { useAuthStore } from '/src/stores/auth.js'
 import { useTeamStore } from '/src/stores/team.js'
 import { useModalStore } from '/src/stores/modal.js'
@@ -70,7 +70,8 @@ const links = ref([
 ])
 
 onMounted(() => {
-  teamStore.init()
+  teamStore.setCurrentTeam(localStorage.getItem('selectedTeam')*1)
+  teamStore.fetchTeams()
 })
 
 const toggleTeamDropdown = () => {

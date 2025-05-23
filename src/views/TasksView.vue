@@ -1,12 +1,9 @@
 <template>
   <div class="tasks-container">
     <div class="team-header">
-      <h2>{{ teamStore.currentTeam.name }}</h2>
-      <p v-if="teamStore.currentTeam.isPersonal" class="team-description">
-        Twój osobisty obszar zadań
-      </p>
-      <p v-else class="team-description">
-        Zespół: {{ teamStore.currentTeam.description }}
+      <h2>{{ teamStore.allTeams?.find(team => team.id === teamStore.currentTeamId)?.teamName }}</h2>
+      <p  class="team-description">
+        {{ teamStore.allTeams?.find(team => team.id === teamStore.currentTeamId)?.description }}
       </p>
     </div>
 
@@ -53,10 +50,10 @@ const selectedTask = ref(null)
 
 // Filtruj zadania według aktualnego zespołu
 const filteredTasks = (status) => {
-  return tasksStore.tasks.filter(task => {
-    const matchesTeam = teamStore.currentTeam.isPersonal
+  return tasksStore.tasks?.filter(task => {
+    const matchesTeam = teamStore?.currentTeam?.isPersonal
         ? !task.teamId
-        : task.teamId === teamStore.currentTeam.id
+        : task.teamId === teamStore?.currentTeam?.id
     return matchesTeam && task.status === status
   })
 }
@@ -74,7 +71,7 @@ const openTaskForm = (status) => {
     description: '',
     status,
     priority: 'medium',
-    teamId: teamStore.currentTeam.isPersonal ? null : teamStore.currentTeam.id
+    teamId: teamStore?.currentTeam?.isPersonal ? null : teamStore?.currentTeam.id
   }
 }
 
