@@ -41,7 +41,8 @@
             class="sidebar-link"
             active-class="active-link"
         >
-          <span class="sidebar-icon">{{ link.icon }}</span>
+<!--          <span class="sidebar-icon"></span>-->
+          <img :src=link.icon alt="TasksIcon" class="sidebar-icon">
           {{ link.label }}
         </router-link>
       </li>
@@ -58,12 +59,14 @@ import { useModalStore } from '/src/stores/modal.js'
 const authStore = useAuthStore()
 const teamStore = useTeamStore()
 const modalStore = useModalStore()
+import tasksIC from '/src/assets/tasksIcon.svg';
+import usersIC from '/src/assets/usersIcon.svg';
 
 const isTeamDropdownOpen = ref(false)
 
 const links = ref([
-  { path: '/tasks', label: 'Zadania' },
-  { path: '/users', label: 'Użytkownicy' }
+  { path: '/tasks', label: 'Zadania', icon: tasksIC },
+  { path: '/users', label: 'Użytkownicy', icon: usersIC }
 ])
 
 onMounted(() => {
@@ -164,6 +167,7 @@ const openCreateTeamModal = () => {
 
 .sidebar-icon {
   margin-right: 0.75rem;
+  width: 22px;
 }
 
 /* Nowa sekcja na dole */
