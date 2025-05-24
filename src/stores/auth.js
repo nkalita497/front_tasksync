@@ -1,4 +1,3 @@
-// src/stores/auth.js
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
@@ -16,7 +15,7 @@ export const useAuthStore = defineStore('auth', () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ email, password })
-            }) 
+            })
 
             if (!res.ok) throw new Error('Logowanie nie powiodło się')
 
@@ -37,12 +36,7 @@ export const useAuthStore = defineStore('auth', () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    firstName,
-                    lastName,
-                    email,
-                    password
-                })
+                body: JSON.stringify({ firstName, lastName, email, password })
             })
 
             if (!res.ok) throw new Error('Rejestracja nie powiodła się')
@@ -59,5 +53,32 @@ export const useAuthStore = defineStore('auth', () => {
         localStorage.removeItem('token')
     }
 
-    return { user, token, isAuthenticated, login, logout, register }
+    async function me() {
+        if (!token.value) return
+
+        try {
+            const res = await fetch('http://localhost:8081/users/me', {
+                headers: {
+                    'Authorization': `Bearer ${token.value}`
+                }
+            })
+
+            if (!res.ok) throw new Error('Token nieważny')
+
+            const data = await res.json()
+            user.value = data.user
+        } catch (err) {
+            logout()
+        }
+    }
+
+    return {
+        user,
+        token,
+        isAuthenticated,
+        login,
+        logout,
+        register,
+        me
+    }
 })

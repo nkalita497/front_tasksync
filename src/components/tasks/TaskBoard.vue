@@ -3,7 +3,7 @@
     <div class="board-header">
       <h2>{{ boardName }}</h2>
       <div class="board-actions">
-        <button class="new-task-btn" @click="openCreateModal">
+        <button class="new-task-btn" @click="openCreateModal()">
           <span>+</span> Nowe zadanie
         </button>
       </div>
@@ -17,7 +17,7 @@
           :title="column.title"
           :tasks="tasks"
           @task-dropped="handleTaskDrop"
-          @add-task="openCreateModal"
+          @add-task="(status) => openCreateModal(status)"
           @task-selected="openEditModal"
       />
     </div>
@@ -53,8 +53,14 @@ const columns = [
 
 const tasks = computed(() => tasksStore.tasks)
 
-const openCreateModal = (status) => {
-  selectedTask.value = { status: status || 'todo' }
+const openCreateModal = (status = 'todo') => {
+  console.log('Opening create modal with status:', status) // Debug log
+  selectedTask.value = {
+    status: status,
+    priority: 'medium',
+    title: '',
+    description: ''
+  }
   modalMode.value = 'create'
   showModal.value = true
 }

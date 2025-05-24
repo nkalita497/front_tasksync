@@ -54,11 +54,12 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     const authStore = useAuthStore()
 
+    await authStore.me()
 
     const isAuthenticated = authStore.isAuthenticated
 
     if (to.meta.requiresAuth && !isAuthenticated) {
-        return next('/login')
+        return next('/')
     }
 
     if (to.meta.requiresGuest && isAuthenticated) {
