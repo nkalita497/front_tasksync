@@ -1,7 +1,7 @@
 <template>
   <div class="tasks-container">
     <div class="team-header">
-      <h2>{{ teamStore.allTeams?.find(team => team.id === teamStore.currentTeamId)?.teamName }}</h2>
+      <h2>{{ teamStore.currentTeamName}}</h2>
       <p  class="team-description">
         {{ teamStore.allTeams?.find(team => team.id === teamStore.currentTeamId)?.description }}
       </p>
@@ -71,7 +71,7 @@ const openTaskForm = (status) => {
     description: '',
     status,
     priority: 'medium',
-    teamId: teamStore?.currentTeam?.isPersonal ? null : teamStore?.currentTeam.id
+    teamId: teamStore.allTeams?.find(team => team.id === teamStore.currentTeamId)?.id
   }
 }
 

@@ -10,8 +10,7 @@ export const useTeamStore = defineStore('team', () => {
 
     const currentTeamName = computed( () => {
         console.log(currentTeamId.value)
-
-
+        setCurrentTeam(localStorage.getItem('selectedTeam')*1);
         if(currentTeamId.value === undefined || currentTeamId.value === null) {
             console.log("Ładuje")
             fetchTeams()
