@@ -22,7 +22,7 @@ export const useAuthStore = defineStore('auth', () => {
             const data = await res.json()
             token.value = data.token
             localStorage.setItem('token', data.token)
-            user.value = data.user || null
+            user.value = me();
         } catch (err) {
             console.error(err)
             throw err
@@ -53,11 +53,14 @@ export const useAuthStore = defineStore('auth', () => {
         localStorage.removeItem('token')
     }
 
+
+
     async function me() {
         if (!token.value) return
 
         try {
             const res = await fetch('http://localhost:8081/users/me', {
+                method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token.value}`
                 }
@@ -66,7 +69,10 @@ export const useAuthStore = defineStore('auth', () => {
             if (!res.ok) throw new Error('Token nieważny')
 
             const data = await res.json()
-            user.value = data.user
+            user.value = data
+            // console.log("TUTAJ")
+            // console.log(user.value);
+            return user.value;
         } catch (err) {
             logout()
         }

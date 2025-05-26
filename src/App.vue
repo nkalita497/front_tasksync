@@ -2,7 +2,7 @@
   <div class="container">
     <LogoutButton v-if="isAuthenticated" />
     <NavBar v-if="isAuthenticated" />
-    <Sidebar v-if="isAuthenticated" />
+<!--    <Sidebar v-if="isAuthenticated" />-->
 
     <main class="main-content">
       <router-view />
@@ -50,9 +50,10 @@ const tasksStore = useTasksStore()
 
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 
+
 // ---------- LIFECYCLE ----------
 onMounted(() => {
-  teamStore.init()
+  teamStore.fetchTeams();
 })
 
 const openModalAtClick = (event) => {

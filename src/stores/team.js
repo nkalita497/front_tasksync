@@ -9,14 +9,11 @@ export const useTeamStore = defineStore('team', () => {
     const allTeams = ref([])
 
     const currentTeamName = computed( () => {
-        console.log(currentTeamId.value)
         setCurrentTeam(localStorage.getItem('selectedTeam')*1);
         if(currentTeamId.value === undefined || currentTeamId.value === null) {
-            console.log("Ładuje")
             fetchTeams()
             return allTeams.value.find(team => team.id === 0)?.teamName || 'Ładowanie...'
         }
-        console.log("Nie Ładuje")
         return allTeams.value.find(team => team.id === currentTeamId.value)?.teamName || 'Ładowanie...'
     })
 
@@ -31,6 +28,8 @@ export const useTeamStore = defineStore('team', () => {
             })
             const data = await res.json()
             allTeams.value = data
+
+            setCurrentTeam(localStorage.getItem('selectedTeam')*1)
 
             // Jeśli nie ustawiono zespołu, ustaw pierwszy
             if (!currentTeamId.value && data.length > 0) {

@@ -8,10 +8,10 @@ html, body {
 :root {
     --primary-color: #ea580c;
     --primary-hover: #c2410c;
-    --primary-light: #ffedd5;
+    --primary-light: #f4f4f9;
     --text-color: #1f2937;
     --text-light: #6b7280;
-    --bg-light: #fff7ed;
+    --bg-light: #f4f4f9;
     --white: #ffffff;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -29,7 +29,7 @@ body {
     padding: 0;
     line-height: 1.5;
     color: var(--text-color);
-    background-color: var(--bg-light);
+    background-color: #f4f4f9;
     height: 100%;
     position: relative;
 }

@@ -61,6 +61,12 @@ const teamStore = useTeamStore()
 const modalStore = useModalStore()
 import tasksIC from '/src/assets/tasksIcon.svg';
 import usersIC from '/src/assets/usersIcon.svg';
+import {data} from "autoprefixer";
+
+// teamStore.fetchTeams();
+// authStore.me();
+// console.log(teamStore.currentTeamName)
+
 
 const isTeamDropdownOpen = ref(false)
 
@@ -69,10 +75,12 @@ const links = ref([
   { path: '/users', label: 'Użytkownicy', icon: usersIC }
 ])
 
-onMounted(() => {
-  teamStore.setCurrentTeam(localStorage.getItem('selectedTeam')*1)
-  teamStore.fetchTeams()
+onMounted(async() => {
+  // teamStore.setCurrentTeam(localStorage.getItem('selectedTeam')*1)
+  await teamStore.fetchTeams()
+  await authStore.me();
 })
+
 
 const toggleTeamDropdown = () => {
   isTeamDropdownOpen.value = !isTeamDropdownOpen.value
