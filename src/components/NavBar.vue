@@ -63,11 +63,6 @@ import tasksIC from '/src/assets/tasksIcon.svg';
 import usersIC from '/src/assets/usersIcon.svg';
 import {data} from "autoprefixer";
 
-// teamStore.fetchTeams();
-// authStore.me();
-// console.log(teamStore.currentTeamName)
-
-
 const isTeamDropdownOpen = ref(false)
 
 const links = ref([
@@ -76,7 +71,6 @@ const links = ref([
 ])
 
 onMounted(async() => {
-  // teamStore.setCurrentTeam(localStorage.getItem('selectedTeam')*1)
   await teamStore.fetchTeams()
   await authStore.me();
 })
@@ -100,12 +94,14 @@ const openCreateTeamModal = () => {
 <style scoped>
 .sidebar {
   width: 250px;
+  min-width: 250px;
   padding: 0;
   background-color: #f4f4f9;
   color: black;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   height: 100%;
-  position: sticky;
+  position: relative;
+  z-index: 1;
   top: 0;
   display: flex;
   flex-direction: column;
@@ -215,7 +211,8 @@ const openCreateTeamModal = () => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 10;
   margin-top: 4px;
-  overflow: hidden;
+  max-height: 50vh;
+  overflow-y: scroll;
 
 }
 
@@ -227,6 +224,7 @@ const openCreateTeamModal = () => {
   cursor: pointer;
   transition: background-color 0.2s;
   height: 40px;
+  border-top: solid 2px #f4f4f9;
 
 }
 

@@ -2,7 +2,7 @@
   <div class="modal-overlay" @click.self="$emit('close')">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>Nowy zespół</h3>
+        <h3>Stwórz nowy zespół</h3>
         <button class="close-button" @click="$emit('close')">×</button>
       </div>
 
@@ -11,23 +11,25 @@
         <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
 
         <div class="form-group">
-          <label>Nazwa zespołu:</label>
+
           <input
               v-model="formData.teamName"
               class="form-control"
-              placeholder="Nazwa zespołu"
+              placeholder=" "
               required
           />
+          <label class="form-label">Nazwa zespołu</label>
         </div>
 
-        <div class="form-group">
-          <label>Opis (opcjonalny):</label>
+        <div class="form-group textarea-group">
+
           <textarea
               v-model="formData.description"
               class="form-control"
               rows="3"
-              placeholder="Krótki opis zespołu"
+              placeholder=" "
           ></textarea>
+          <label class="form-label">Opis (opcjonalny)</label>
         </div>
 
         <!-- Usunięto sekcję z członkami, ponieważ backend tego nie obsługuje -->
@@ -82,7 +84,8 @@ const createTeam = async () => {
       },
       body: JSON.stringify({
         teamName: formData.value.teamName,
-        description: formData.value.description
+        description: formData.value.description,
+        userIds: []
         // Nie wysyłamy już userIds, ponieważ backend tego nie obsługuje
       })
     })
@@ -90,18 +93,20 @@ const createTeam = async () => {
     if (!response.ok) {
       const errorData = await response.json()
       throw new Error(errorData.message || 'Nie udało się utworzyć zespołu')
+    }else{
+      successMessage.value = 'Zespół został pomyślnie utworzony!'
+      await teamStore.fetchTeams()
+      teamStore.setCurrentTeam(teamStore.allTeams[teamStore.allTeams.length-1])
+      console.log(teamStore.allTeams[teamStore.allTeams.length-1].teamName);
+      emit('close');
+      window.location.reload();
+
     }
+    //
+    // setTimeout(() => {
+    //   emit('close')
+    // }, 1500)
 
-    const newTeam = await response.json()
-    successMessage.value = 'Zespół został pomyślnie utworzony!'
-
-    await teamStore.fetchTeams()
-    teamStore.setCurrentTeam(newTeam.id)
-
-    setTimeout(() => {
-      emit('team-created', newTeam)
-      emit('close')
-    }, 1500)
   } catch (error) {
     console.error('Błąd tworzenia zespołu:', error)
     errorMessage.value = error.message || 'Wystąpił błąd podczas tworzenia zespołu'
@@ -126,10 +131,10 @@ const createTeam = async () => {
 }
 
 .modal-content {
-  background: white;
+  background: #f4f4f9;
   border-radius: 8px;
   width: 100%;
-  max-width: 500px;
+  max-width: 700px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
@@ -167,36 +172,61 @@ const createTeam = async () => {
 }
 
 .form-group {
-  margin-bottom: 1.25rem;
+  position: relative;
+  border: 1px solid #d1d5db;
+  padding: 14px 20px 6px;
+  border-radius: 3px;
+  transition: border-color 0.3s;
+  height: 40px;
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #475569;
+.textarea-group{
+  height: auto;
+  max-width: 100%;
+}
+
+.form-label {
+  position: absolute;
+  font-size: 1rem;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  transition: all 0.2s ease-out;
+  padding: 0 0 0 9px;
+  color: #999;
+  pointer-events: none;
 }
 
 .form-control {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 0.9375rem;
-  transition: border-color 0.2s;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  font-size: 16px;
+  padding: 6px 0;
+  background: transparent;
+  margin-top: 10px; /* im większy tym niżej będzie input */
+}
+
+.form-group:focus-within {
+  border-color: #1693f9;
+  box-shadow: 0 0 0 1px rgba(0, 21, 255, 0.61);
 }
 
 .form-control:focus {
   outline: none;
   border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  box-shadow: none;
 }
 
-textarea.form-control {
-  min-height: 80px;
-  resize: vertical;
+.form-control:focus + .form-label,
+.form-control:not(:placeholder-shown) + .form-label{
+  top: 15px; /*im mniejsze tym wyżej będzie label po kliknięciu */
+  left: 10px;
+  font-size: 12px;
 }
+
+
 
 .modal-footer {
   padding: 1rem 1.5rem;
