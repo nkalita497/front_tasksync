@@ -1,6 +1,6 @@
 <template>
   <div class="board">
-    <!-- Kolumny tablicy -->
+    <!-- Kolumny -->
     <TaskColumn
         v-for="status in statuses"
         :key="status"
@@ -9,7 +9,25 @@
         :tasks="tasks"
         @task-dropped="onTaskDropped"
         @add-task="openTaskForm"
-        @task-selected="openEditTask"
+        @task-selected="openTaskDetails"
+    />
+
+    <!-- Modale -->
+    <TaskDetailsModal
+        v-if="modalStore.activeModal === 'TaskDetails'"
+        :open="true"
+        :task="modalStore.modalProps.task"
+        @close="modalStore.closeModal"
+        @edit="onEditFromDetails"
+        @delete="onDeleteFromDetails"
+    />
+
+    <TaskFormModal
+        v-if="modalStore.activeModal === 'Task'"
+        :open="true"
+        :initialTask="modalStore.modalProps.task"
+        :mode="modalStore.modalProps.mode"
+        @close="modalStore.closeModal"
     />
   </div>
 </template>
@@ -18,13 +36,15 @@
 import { useTasksStore } from '@/stores/tasks'
 import { useModalStore } from '@/stores/modal'
 import TaskColumn from '@/components/tasks/TaskColumn.vue'
+import TaskDetailsModal from '@/components/modals/TaskDetailsModal.vue'
+import TaskFormModal from '@/components/modals/TaskFormModal.vue'
 
 // ---------- STORES ----------
 const tasksStore = useTasksStore()
 const modalStore = useModalStore()
 const tasks = tasksStore.tasks
 
-// ---------- KONFIGURACJA KOLUMN ----------
+// ---------- KOLUMNOWE ----------
 const statuses = ['todo', 'in-progress', 'done']
 const statusLabels = {
   todo: 'Do zrobienia',
@@ -33,8 +53,6 @@ const statusLabels = {
 }
 
 // ---------- HANDLERY ----------
-
-// Przeciągnięto i upuszczono zadanie
 const onTaskDropped = ({ taskId, newStatus }) => {
   const task = tasks.value.find(t => String(t.id) === String(taskId))
   if (task && task.status !== newStatus) {
@@ -42,7 +60,6 @@ const onTaskDropped = ({ taskId, newStatus }) => {
   }
 }
 
-// Kliknięto „+” w kolumnie → tworzymy nowe zadanie
 const openTaskForm = (status) => {
   modalStore.openModal('Task', {
     mode: 'create',
@@ -55,11 +72,25 @@ const openTaskForm = (status) => {
   })
 }
 
-const openEditTask = (task) => {
+const openTaskDetails = (task) => {
+  modalStore.openModal('TaskDetails', {
+    task
+  })
+}
+
+const onEditFromDetails = (task) => {
   modalStore.openModal('Task', {
     mode: 'edit',
     task: { ...task }
   })
+}
+
+const onDeleteFromDetails = async (taskId) => {
+  const success = await tasksStore.deleteTask(taskId)
+  if (success) {
+    modalStore.closeModal()
+    // Optionally: refresh task list from backend
+  }
 }
 </script>
 

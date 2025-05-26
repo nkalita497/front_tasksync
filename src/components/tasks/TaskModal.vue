@@ -51,10 +51,33 @@
             </div>
           </div>
           <div class="modal-body-subtasks">
-            <lab>Dodaj podzadania</lab>
-            <!--            TODO dodać checkboxy do dodawania podzadań-->
+            <label>Podzadania:</label>
+            <div v-for="(subtask, index) in formData.subtasks" :key="index" class="subtask-item">
+              <label class="custom-checkbox">
+                <input
+                    type="checkbox"
+                    v-model="subtask.completed"
+                    class="subtask-checkbox"
+                >
+                <span class="checkmark"></span>
+              </label>
+              <input
+                  type="text"
+                  v-model="subtask.title"
+                  class="subtask-input"
+                  placeholder="Nazwa podzadania"
+              >
+              <button @click="removeSubtask(index)" class="subtask-remove">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <button @click="addSubtask" class="btn-add-subtask">
+              + Dodaj podzadanie
+            </button>
           </div>
-
         </div>
         <div class="modal-footer">
           <button class="btn-cancel" @click="closeModal">Anuluj</button>
@@ -86,15 +109,22 @@ const formData = ref({
   description: '',
   status: 'TO_DO',
   priority: 'MEDIUM',
-  assignedTo: ''
+  assignedTo: '',
+  subtasks: []
 })
 
 const clickX = ref(window.innerWidth / 2)
 const clickY = ref(window.innerHeight / 2)
 
 watch(() => props.task, (task) => {
-  if (task) formData.value = {...task}
-  else resetForm()
+  if (task) {
+    formData.value = {
+      ...task,
+      subtasks: task.subtasks ? [...task.subtasks] : []
+    }
+  } else {
+    resetForm()
+  }
 }, {immediate: true})
 
 const resetForm = () => {
@@ -104,15 +134,23 @@ const resetForm = () => {
     description: '',
     status: 'TO_DO',
     priority: 'MEDIUM',
-    assignedTo: ''
+    assignedTo: '',
+    subtasks: []
   }
 }
 
-const saveTask = async () => {
-  // emit('save', {
-  //   ...formData.value
-  // })
+const addSubtask = () => {
+  formData.value.subtasks.push({
+    title: '',
+    completed: false
+  })
+}
 
+const removeSubtask = (index) => {
+  formData.value.subtasks.splice(index, 1)
+}
+
+const saveTask = async () => {
   if(!formData.value.title) return
 
   try {
@@ -130,7 +168,7 @@ const saveTask = async () => {
         priority: formData.value.priority,
         assignedUserId: authStore.user.id,
         teamId: localStorage.getItem('selectedTeam') * 1,
-        subtasks: []
+        subtasks: formData.value.subtasks
       })
     })
 
@@ -138,14 +176,10 @@ const saveTask = async () => {
       const errorData = await response.json()
       throw new Error(errorData.message || 'Nie udało się dodać zadania')
     } else {
-      // successMessage.value = 'Dodano zadanie!'
-      //await teamStore.fetchTeams()
-      //teamStore.setCurrentTeam(teamStore.allTeams[teamStore.allTeams.length-1])
-      //console.log(teamStore.allTeams[teamStore.allTeams.length-1].teamName);
       closeModal()
       window.location.reload();
     }
-  }  catch (error){
+  } catch (error) {
     console.error('Błąd dodawania zadania:', error)
   }
 }
@@ -158,7 +192,6 @@ const allowScroll = () => document.body.style.overflow = ''
 onMounted(() => preventScroll())
 onBeforeUnmount(() => allowScroll())
 
-// Ustaw pozycję kliknięcia z zewnątrz
 defineExpose({
   setClickPosition(x, y) {
     clickX.value = x
@@ -335,5 +368,120 @@ defineExpose({
 
 .btn-save:hover {
   background: #4f46e5;
+}
+
+.subtask-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  gap: 0.5rem;
+}
+
+.subtask-input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.subtask-input:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+.subtask-remove {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.subtask-remove:hover {
+  background-color: #fee2e2;
+  border-radius: 50%;
+}
+
+.btn-add-subtask {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #e0e7ff;
+  color: #4f46e5;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  width: 100%;
+}
+
+.btn-add-subtask:hover {
+  background-color: #c7d2fe;
+}
+
+/* Niestandardowy checkbox */
+.custom-checkbox {
+  display: inline-block;
+  position: relative;
+  padding-left: 25px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  height: 18px;
+  margin-right: 0.5rem;
+}
+
+.custom-checkbox .subtask-checkbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: #fff;
+  border: 2px solid #6366f1;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.custom-checkbox:hover .subtask-checkbox ~ .checkmark {
+  background-color: #f3f4f6;
+}
+
+.custom-checkbox .subtask-checkbox:checked ~ .checkmark {
+  background-color: #6366f1;
+  border-color: #6366f1;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.custom-checkbox .subtask-checkbox:checked ~ .checkmark:after {
+  display: block;
+}
+
+.custom-checkbox .checkmark:after {
+  left: 5px;
+  top: 1px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 </style>
