@@ -3,38 +3,38 @@ import { ref } from 'vue'
 
 export const useTasksStore = defineStore('tasks', () => {
     const tasks = ref([
-        {
-            id: '1',
-            type: 'Story',
-            title: 'Implementacja drag and drop',
-            description: 'Zaimplementować funkcjonalność przeciągania zadań między kolumnami',
-            status: 'done',
-            priority: 'high',
-            assignee: 'user1'
-        },
-        {
-            id: '2',
-            type: 'Bug',
-            title: 'Naprawić błąd z walidacją formularza',
-            description: 'Formularz nie pokazuje błędów walidacji',
-            status: 'in-progress',
-            priority: 'critical',
-            assignee: 'user2'
-        },
-        {
-            id: '3',
-            type: 'Task',
-            title: 'Dodać nowe ikony',
-            description: '',
-            status: 'todo',
-            priority: 'low',
-            assignee: null
-        }
+        // {
+        //     id: '1',
+        //     type: 'Story',
+        //     title: 'Implementacja drag and drop',
+        //     description: 'Zaimplementować funkcjonalność przeciągania zadań między kolumnami',
+        //     status: 'done',
+        //     priority: 'high',
+        //     assignee: 'user1'
+        // },
+        // {
+        //     id: '2',
+        //     type: 'Bug',
+        //     title: 'Naprawić błąd z walidacją formularza',
+        //     description: 'Formularz nie pokazuje błędów walidacji',
+        //     status: 'in-progress',
+        //     priority: 'critical',
+        //     assignee: 'user2'
+        // },
+        // {
+        //     id: '3',
+        //     type: 'Task',
+        //     title: 'Dodać nowe ikony',
+        //     description: '',
+        //     status: 'todo',
+        //     priority: 'low',
+        //     assignee: null
+        // }
     ])
 
     function addTask(task) {
         const newTask = {
-            type: 'Task', // Domyślny typ
+            title: task.title,
             ...task,
             id: Date.now().toString(),
             createdAt: new Date().toISOString(),
