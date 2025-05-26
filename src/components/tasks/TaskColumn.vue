@@ -27,8 +27,13 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import {computed, onMounted} from 'vue'
 import TaskItem from './TaskItem.vue'
+import {useTasksStore} from "@/stores/tasks.js";
+import {useTeamStore} from "@/stores/team.js";
+
+const taskStore = useTasksStore();
+const teamStore = useTeamStore();
 
 const props = defineProps({
   status: {
@@ -48,8 +53,15 @@ const props = defineProps({
 const emit = defineEmits(['task-dropped', 'add-task', 'task-selected'])
 
 const filteredTasks = computed(() => {
+  console.log(props.tasks)
+  console.log(props.status)
   return props.tasks.filter(task => task.status === props.status)
 })
+
+// onMounted(async() =>{
+//   await taskStore.fetchTasks(teamStore.currentTeamId);
+// })
+
 
 const columnClass = computed(() => `status-${props.status}`)
 

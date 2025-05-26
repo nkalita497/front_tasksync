@@ -1,7 +1,8 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import {defineStore} from 'pinia'
+import {ref} from 'vue'
 
 export const useTasksStore = defineStore('tasks', () => {
+    const bearer = 'Bearer ' + localStorage.getItem("token");
     const tasks = ref([
         // {
         //     id: '1',
@@ -32,16 +33,37 @@ export const useTasksStore = defineStore('tasks', () => {
         // }
     ])
 
-    function addTask(task) {
-        const newTask = {
-            title: task.title,
-            ...task,
-            id: Date.now().toString(),
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+    // function addTask(task) {
+    //     const newTask = {
+    //         title: task.title,
+    //         ...task,
+    //         id: Date.now().toString(),
+    //         createdAt: new Date().toISOString(),
+    //         updatedAt: new Date().toISOString()
+    //     }
+    //     tasks.value.push(newTask)
+    //     return newTask
+    // }
+
+    async function fetchTasks(currentTeam) {
+        try {
+
+            console.log(currentTeam)
+            const res = await fetch(`http://localhost:8081/tasks/search-by-team/${currentTeam}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': bearer
+                }
+            })
+
+            if(res.ok){
+                tasks.value = await res.json()
+            }else if (res.status === 404){
+                console.log("Nie znaleziono żadnych zadań")
+            }
+        } catch (error) {
+            console.error('Błąd pobierania tasków:', error)
         }
-        tasks.value.push(newTask)
-        return newTask
     }
 
     function updateTask(updatedTask) {
@@ -61,7 +83,8 @@ export const useTasksStore = defineStore('tasks', () => {
 
     return {
         tasks,
-        addTask,
+        // addTask,
+        fetchTasks,
         updateTask,
         deleteTask
     }

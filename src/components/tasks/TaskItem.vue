@@ -1,7 +1,7 @@
 <template>
   <div
       class="task-item"
-      :class="[taskClass, { 'dragging': isDragging }]"
+      :class="[{'dragging': isDragging }]"
       draggable="true"
       @dragstart="startDrag"
       @dragend="isDragging = false"
@@ -38,14 +38,12 @@ const isDragging = ref(false)
 const taskKey = computed(() => `TASK-${props.index + 1}`)
 const priorityLabel = computed(() => {
   const priorities = {
-    low: 'Niski',
-    medium: 'Średni',
-    high: 'Wysoki',
+    LOW: 'Niski',
+    MEDIUM: 'Średni',
+    HIGH: 'Wysoki',
   }
   return priorities[props.task.priority] || props.task.priority
 })
-
-
 
 const startDrag = (e) => {
   isDragging.value = true

@@ -1,8 +1,8 @@
 <template>
   <div class="tasks-container">
     <div class="team-header">
-      <h2>{{ teamStore.currentTeamName}}</h2>
-      <p  class="team-description">
+      <h2>{{ teamStore.currentTeamName }}</h2>
+      <p class="team-description">
         {{ teamStore.allTeams?.find(team => team.id === teamStore.currentTeamId)?.description }}
       </p>
     </div>
@@ -13,7 +13,7 @@
           :key="status"
           :status="status"
           :title="statusLabels[status]"
-          :tasks="filteredTasks(status)"
+          :tasks="filteredTasks()"
           @task-dropped="onTaskDropped"
           @add-task="openTaskForm"
           @task-selected="openEditTask"
@@ -30,38 +30,49 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import {ref, computed, watch, onMounted} from 'vue'
 import TaskColumn from '@/components/tasks/TaskColumn.vue'
 import TaskModal from '@/components/tasks/TaskModal.vue'
-import { useTasksStore } from '@/stores/tasks'
-import { useTeamStore } from '@/stores/team'
+import {useTasksStore} from '@/stores/tasks'
+import {useTeamStore} from '@/stores/team'
 
 const tasksStore = useTasksStore()
 const teamStore = useTeamStore()
 
-const statuses = ['todo', 'in-progress', 'done']
+const statuses = ['TO_DO', 'IN_PROGRESS', 'DONE']
 const statusLabels = {
-  'todo': 'Do zrobienia',
-  'in-progress': 'W trakcie',
-  'done': 'Zrobione'
+  'TO_DO': 'Do zrobienia',
+  'IN_PROGRESS': 'W trakcie',
+  'DONE': 'Zrobione'
 }
 
 const selectedTask = ref(null)
 
+const loadTasks = async () => {
+  if (teamStore.currentTeamId) {
+    await tasksStore.fetchTasks(teamStore.currentTeamId)
+  }
+}
+
+onMounted(loadTasks)
+
+watch(() => teamStore.currentTeamId, async () => {
+  await loadTasks()
+})
+
+
+
 // Filtruj zadania według aktualnego zespołu
-const filteredTasks = (status) => {
+const filteredTasks = () => {
   return tasksStore.tasks?.filter(task => {
-    const matchesTeam = teamStore?.currentTeam?.isPersonal
-        ? !task.teamId
-        : task.teamId === teamStore?.currentTeam?.id
-    return matchesTeam && task.status === status
+    return (task.teamId === teamStore.currentTeamId)
   })
 }
 
-const onTaskDropped = ({ taskId, newStatus }) => {
+const onTaskDropped = ({taskId, newStatus}) => {
   const task = tasksStore.tasks.find(t => t.id === taskId)
   if (task && task.status !== newStatus) {
-    tasksStore.updateTask({ ...task, status: newStatus })
+    tasksStore.updateTask({...task, status: newStatus})
   }
 }
 
@@ -76,7 +87,7 @@ const openTaskForm = (status) => {
 }
 
 const openEditTask = (task) => {
-  selectedTask.value = { ...task }
+  selectedTask.value = {...task}
 }
 
 const onTaskSave = (task) => {
