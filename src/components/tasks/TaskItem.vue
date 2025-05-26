@@ -8,20 +8,46 @@
       @click="selectTask"
   >
     <div class="task-header">
-      <span class="task-key">{{ taskKey }}</span>
-      <span class="task-type">{{ task.type || 'Task' }}</span>
-    </div>
-    <h4 class="task-title">{{ task.title }}</h4>
-    <div class="task-footer">
+      <h4 class="task-title">{{ task.title }}</h4>
       <span class="task-priority" :class="'priority-' + task.priority">
         {{ priorityLabel }}
       </span>
+    </div>
+
+    <h3 class="task-descr"> {{ task.description }}</h3>
+    <div class="progress-wrap" v-if="task.subtasks.length>0">
+      <div class="progress-info-wrap">
+        <p>Podzadania</p>
+        <p>{{ doneSubtasks }}/{{ task.subtasks.length }}</p>
+      </div>
+
+      <div class="progress-bar">
+        <div
+            class="progress-fill"
+            :style="{ width: progressPercentage + '%' }"
+        ></div>
+      </div>
+
+    </div>
+
+    <div class="task-footer">
+<!--    <div class="user-wrap">-->
+<!--      <div></div>-->
+<!--      <p>User name</p>-->
+<!--    </div>-->
+        <img src="../../assets/removeIcon.svg" width="17px" alt="delete" v-on:click.stop="removeTask(task.id)"/>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import {computed, ref} from 'vue'
+import {useAuthStore} from "@/stores/auth.js";
+import {useTasksStore} from "@/stores/tasks.js";
+
+
+const tasksStore = useTasksStore();
+const authStore = useAuthStore();
 
 const emit = defineEmits(['task-selected'])
 
@@ -33,14 +59,21 @@ const props = defineProps({
   index: Number
 })
 
+const doneSubtasks = computed(() => {
+  return props.task.subtasks.filter(subtask => {
+    return subtask.status === true;
+  }).length;
+})
+
+
 const isDragging = ref(false)
 
 const taskKey = computed(() => `TASK-${props.index + 1}`)
 const priorityLabel = computed(() => {
   const priorities = {
-    LOW: 'Niski',
-    MEDIUM: 'Średni',
-    HIGH: 'Wysoki',
+    LOW: ' ',
+    MEDIUM: ' ',
+    HIGH: ' ',
   }
   return priorities[props.task.priority] || props.task.priority
 })
@@ -54,6 +87,22 @@ const startDrag = (e) => {
 const selectTask = () => {
   emit('task-selected', props.task)
 }
+
+const removeTask = (id) =>{
+  const res = tasksStore.deleteTask(id);
+    window.location.reload()
+}
+
+const completedSubtasks = computed(() => doneSubtasks.value || 0)
+const totalSubtasks = computed(() => props.task.subtasks.length || 0)
+
+const progressPercentage = computed(() => {
+  if (totalSubtasks.value === 0) return 0
+  return Math.round((completedSubtasks.value / totalSubtasks.value) * 100)
+})
+
+
+
 </script>
 
 
@@ -99,38 +148,47 @@ const selectTask = () => {
 
 .task-title {
   margin: 0 0 0.75rem;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #172b4d;
   font-weight: 500;
 }
 
+.task-descr {
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  color: #32486e;
+  font-weight: 300;
+  margin-bottom: 30px;
+}
+
 .task-footer {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
+  justify-content: flex-end;
 }
 
 .task-priority {
+  width: 2px;
+  height: 7px;
   font-size: 0.75rem;
-  padding: 0.2rem 0.4rem;
-  border-radius: 3px;
+  padding: 0.3rem 0.5rem;
+  border-radius: 20px;
 }
 
-.priority-low {
-  background: #e3fcef;
+.priority-LOW {
+  background: #9fe1b3;
   color: #064;
 }
 
-.priority-medium {
-  background: #deebff;
-  color: #0747a6;
+.priority-MEDIUM {
+  background: #f3e585;
+  color: #cb9b13;
 }
 
-.priority-high {
-  background: #ffebe6;
+.priority-HIGH {
+  background: #e59889;
   color: #bf2600;
 }
-
 
 
 .task-bug {
@@ -143,5 +201,45 @@ const selectTask = () => {
 
 .task-task {
   border-left-color: #4c9aff;
+}
+
+
+.progress-info-wrap {
+  display: flex;
+  justify-content: space-between
+}
+
+.progress-info-wrap p{
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  color: #32486e;
+  font-weight: 400;
+}
+
+
+.subtask-progress {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #4b5563;
+}
+
+
+
+.progress-bar {
+  flex: 1;
+  height: 6px;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #0d7efc; /* niebieski */
+  transition: width 0.3s ease;
 }
 </style>

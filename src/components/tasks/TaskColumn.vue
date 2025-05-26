@@ -53,8 +53,6 @@ const props = defineProps({
 const emit = defineEmits(['task-dropped', 'add-task', 'task-selected'])
 
 const filteredTasks = computed(() => {
-  console.log(props.tasks)
-  console.log(props.status)
   return props.tasks.filter(task => task.status === props.status)
 })
 

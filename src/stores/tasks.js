@@ -77,8 +77,24 @@ export const useTasksStore = defineStore('tasks', () => {
         }
     }
 
-    function deleteTask(id) {
-        tasks.value = tasks.value.filter(t => t.id !== id)
+    async function deleteTask(id) {
+        try {
+            const res = await fetch(`http://localhost:8081/tasks/remove/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': bearer
+                }
+            })
+
+            if(res.ok){
+                return true
+            }else if (res.status === 404){
+                return false
+            }
+        } catch (error) {
+            console.error('Błąd pobierania tasków:', error)
+            return false
+        }
     }
 
     return {
