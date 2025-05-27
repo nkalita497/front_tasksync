@@ -1,19 +1,19 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-
-const bearer = 'Bearer eyJhbGciOiJIUzI5NiIsInR5cCI6IkJWTiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzE0NjQ0Mzg0LCJleHAiOjE3MTQ3MzA3ODR9.XFwWw03e4h01K3sTfN_W-4qEa-6QjGzW1o1-v9jB-4I'
+import { useAuthStore } from './auth'
 
 export const useTasksStore = defineStore('tasks', () => {
     const tasks = ref([])
 
     async function updateTask(updatedTask) {
+        const authStore = useAuthStore()
         const taskToUpdate = { ...updatedTask }
         try {
             const res = await fetch(`http://localhost:8081/tasks/update/${updatedTask.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': bearer
+                    'Authorization': `Bearer ${authStore.token}`
                 },
                 body: JSON.stringify(taskToUpdate)
             })
@@ -34,10 +34,11 @@ export const useTasksStore = defineStore('tasks', () => {
     }
 
     async function fetchTasks() {
+        const authStore = useAuthStore()
         try {
             const res = await fetch('http://localhost:8081/tasks', {
                 headers: {
-                    'Authorization': bearer
+                    'Authorization': `Bearer ${authStore.token}`
                 }
             })
 
@@ -51,11 +52,12 @@ export const useTasksStore = defineStore('tasks', () => {
     }
 
     async function deleteTask(id) {
+        const authStore = useAuthStore()
         try {
             const res = await fetch(`http://localhost:8081/tasks/delete/${id}`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': bearer
+                    'Authorization': `Bearer ${authStore.token}`
                 }
             })
 
