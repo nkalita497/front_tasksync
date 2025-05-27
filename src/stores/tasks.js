@@ -9,8 +9,8 @@ export const useTasksStore = defineStore('tasks', () => {
         const authStore = useAuthStore()
         const taskToUpdate = { ...updatedTask }
         try {
-            const res = await fetch(`http://localhost:8081/tasks/update/${updatedTask.id}`, {
-                method: 'PUT',
+            const res = await fetch(`http://localhost:8081/tasks/update`, {  // Zmienione z /update/{id} na /update
+                method: 'POST',  // Backend używa POST, nie PUT
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${authStore.token}`
@@ -33,10 +33,16 @@ export const useTasksStore = defineStore('tasks', () => {
         }
     }
 
-    async function fetchTasks() {
+    async function fetchTasks(teamId) {
         const authStore = useAuthStore()
         try {
-            const res = await fetch('http://localhost:8081/tasks', {
+            if (!teamId) {
+                console.warn('No team ID provided')
+                tasks.value = []
+                return
+            }
+
+            const res = await fetch(`http://localhost:8081/tasks/search-by-team/${teamId}`, {
                 headers: {
                     'Authorization': `Bearer ${authStore.token}`
                 }
@@ -45,6 +51,9 @@ export const useTasksStore = defineStore('tasks', () => {
             if(res.ok){
                 const backendTasks = await res.json()
                 tasks.value = backendTasks
+            } else if (res.status === 404) {
+                // Brak zadań dla tego zespołu
+                tasks.value = []
             }
         } catch (error) {
             console.error('Błąd pobierania zadań:', error)
@@ -54,7 +63,7 @@ export const useTasksStore = defineStore('tasks', () => {
     async function deleteTask(id) {
         const authStore = useAuthStore()
         try {
-            const res = await fetch(`http://localhost:8081/tasks/delete/${id}`, {
+            const res = await fetch(`http://localhost:8081/tasks/remove/${id}`, {  // Zmienione z /delete/ na /remove/
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${authStore.token}`
