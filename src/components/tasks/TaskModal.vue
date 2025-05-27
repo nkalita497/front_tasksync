@@ -1,17 +1,11 @@
 <template>
   <transition name="modal">
     <div class="modal-overlay" @click.self="closeModal">
-      <div
-          class="modal-content"
-          :style="{
-          transformOrigin: `${clickX}px ${clickY}px`
-        }"
-      >
+      <div class="modal-content" :style="{ transformOrigin: `${clickX}px ${clickY}px` }">
         <div class="modal-header">
           <h3>{{ mode === 'create' ? 'Nowe zadanie' : 'Edytuj zadanie' }}</h3>
           <button class="close-button" @click="closeModal">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
-                 viewBox="0 0 24 24" width="24" height="24">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -22,7 +16,7 @@
           <div class="modal-body-info">
             <div class="form-group">
               <label>Tytuł:</label>
-              <input v-model="formData.title" class="form-control" required/>
+              <input v-model="formData.title" class="form-control" required />
             </div>
 
             <div class="form-group">
@@ -50,23 +44,15 @@
               </div>
             </div>
           </div>
+
           <div class="modal-body-subtasks">
             <label>Podzadania:</label>
             <div v-for="(subtask, index) in formData.subtasks" :key="index" class="subtask-item">
               <label class="custom-checkbox">
-                <input
-                    type="checkbox"
-                    v-model="subtask.completed"
-                    class="subtask-checkbox"
-                >
+                <input type="checkbox" v-model="subtask.completed" class="subtask-checkbox" />
                 <span class="checkmark"></span>
               </label>
-              <input
-                  type="text"
-                  v-model="subtask.title"
-                  class="subtask-input"
-                  placeholder="Nazwa podzadania"
-              >
+              <input type="text" v-model="subtask.title" class="subtask-input" placeholder="Nazwa podzadania" />
               <button @click="removeSubtask(index)" class="subtask-remove">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -74,16 +60,13 @@
                 </svg>
               </button>
             </div>
-            <button @click="addSubtask" class="btn-add-subtask">
-              + Dodaj podzadanie
-            </button>
+            <button @click="addSubtask" class="btn-add-subtask">+ Dodaj podzadanie</button>
           </div>
         </div>
+
         <div class="modal-footer">
           <button class="btn-cancel" @click="closeModal">Anuluj</button>
-          <button class="btn-save" @click="saveTask">
-            {{ mode === 'create' ? 'Dodaj zadanie' : 'Zapisz zmiany' }}
-          </button>
+          <button class="btn-save" @click="saveTask">{{ mode === 'create' ? 'Dodaj zadanie' : 'Zapisz zmiany' }}</button>
         </div>
       </div>
     </div>
@@ -91,14 +74,14 @@
 </template>
 
 <script setup>
-import {ref, watch, onMounted, onBeforeUnmount} from 'vue'
-import {useAuthStore} from "@/stores/auth.js";
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
+import { useAuthStore } from "@/stores/auth.js"
 
-const authStore = useAuthStore();
+const authStore = useAuthStore()
 
 const props = defineProps({
   task: Object,
-  mode: {type: String, default: 'create'}
+  mode: { type: String, default: 'create' }
 })
 
 const emit = defineEmits(['save', 'close'])
@@ -120,12 +103,17 @@ watch(() => props.task, (task) => {
   if (task) {
     formData.value = {
       ...task,
-      subtasks: task.subtasks ? [...task.subtasks] : []
+      subtasks: task.subtasks
+          ? task.subtasks.map(st => ({
+            title: st.content || '',
+            completed: st.status === 'DONE'
+          }))
+          : []
     }
   } else {
     resetForm()
   }
-}, {immediate: true})
+}, { immediate: true })
 
 const resetForm = () => {
   formData.value = {
@@ -140,10 +128,7 @@ const resetForm = () => {
 }
 
 const addSubtask = () => {
-  formData.value.subtasks.push({
-    title: '',
-    completed: false
-  })
+  formData.value.subtasks.push({ title: '', completed: false })
 }
 
 const removeSubtask = (index) => {
@@ -151,7 +136,7 @@ const removeSubtask = (index) => {
 }
 
 const saveTask = async () => {
-  if(!formData.value.title) return
+  if (!formData.value.title) return
 
   try {
     const response = await fetch('http://localhost:8081/tasks/add', {
@@ -168,7 +153,10 @@ const saveTask = async () => {
         priority: formData.value.priority,
         assignedUserId: authStore.user.id,
         teamId: localStorage.getItem('selectedTeam') * 1,
-        subtasks: formData.value.subtasks
+        subtasks: formData.value.subtasks.map(st => ({
+          content: st.title,
+          status: st.completed ? 'DONE' : 'TO_DO'
+        }))
       })
     })
 
@@ -177,7 +165,7 @@ const saveTask = async () => {
       throw new Error(errorData.message || 'Nie udało się dodać zadania')
     } else {
       closeModal()
-      window.location.reload();
+      window.location.reload()
     }
   } catch (error) {
     console.error('Błąd dodawania zadania:', error)
@@ -199,7 +187,6 @@ defineExpose({
   }
 })
 </script>
-
 <style scoped>
 .modal-enter-active,
 .modal-leave-active {
