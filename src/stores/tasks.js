@@ -1,107 +1,71 @@
-import {defineStore} from 'pinia'
-import {ref} from 'vue'
+import { ref } from 'vue'
+import { defineStore } from 'pinia'
+
+const bearer = 'Bearer eyJhbGciOiJIUzI5NiIsInR5cCI6IkJWTiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzE0NjQ0Mzg0LCJleHAiOjE3MTQ3MzA3ODR9.XFwWw03e4h01K3sTfN_W-4qEa-6QjGzW1o1-v9jB-4I'
 
 export const useTasksStore = defineStore('tasks', () => {
-    const bearer = 'Bearer ' + localStorage.getItem("token");
-    const tasks = ref([
-        // {
-        //     id: '1',
-        //     type: 'Story',
-        //     title: 'Implementacja drag and drop',
-        //     description: 'Zaimplementować funkcjonalność przeciągania zadań między kolumnami',
-        //     status: 'done',
-        //     priority: 'high',
-        //     assignee: 'user1'
-        // },
-        // {
-        //     id: '2',
-        //     type: 'Bug',
-        //     title: 'Naprawić błąd z walidacją formularza',
-        //     description: 'Formularz nie pokazuje błędów walidacji',
-        //     status: 'in-progress',
-        //     priority: 'critical',
-        //     assignee: 'user2'
-        // },
-        // {
-        //     id: '3',
-        //     type: 'Task',
-        //     title: 'Dodać nowe ikony',
-        //     description: '',
-        //     status: 'todo',
-        //     priority: 'low',
-        //     assignee: null
-        // }
-    ])
+    const tasks = ref([])
 
-    // function addTask(task) {
-    //     const newTask = {
-    //         title: task.title,
-    //         ...task,
-    //         id: Date.now().toString(),
-    //         createdAt: new Date().toISOString(),
-    //         updatedAt: new Date().toISOString()
-    //     }
-    //     tasks.value.push(newTask)
-    //     return newTask
-    // }
-
-    async function fetchTasks(currentTeam) {
+    async function updateTask(updatedTask) {
+        const taskToUpdate = { ...updatedTask }
         try {
+            const res = await fetch(`http://localhost:8081/tasks/update/${updatedTask.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': bearer
+                },
+                body: JSON.stringify(taskToUpdate)
+            })
 
-            console.log(currentTeam)
-            const res = await fetch(`http://localhost:8081/tasks/search-by-team/${currentTeam}`, {
-                method: 'GET',
+            if(res.ok) {
+                const index = tasks.value.findIndex(t => t.id === updatedTask.id)
+                if (index !== -1) {
+                    tasks.value[index] = {
+                        ...tasks.value[index],
+                        ...updatedTask,
+                        updatedAt: new Date().toISOString()
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Błąd aktualizacji zadania:', error)
+        }
+    }
+
+    async function fetchTasks() {
+        try {
+            const res = await fetch('http://localhost:8081/tasks', {
                 headers: {
                     'Authorization': bearer
                 }
             })
 
             if(res.ok){
-                tasks.value = await res.json()
-            }else if (res.status === 404){
-                console.log("Nie znaleziono żadnych zadań")
+                const backendTasks = await res.json()
+                tasks.value = backendTasks
             }
         } catch (error) {
-            console.error('Błąd pobierania tasków:', error)
-        }
-    }
-
-    function updateTask(updatedTask) {
-        const index = tasks.value.findIndex(t => t.id === updatedTask.id)
-        if (index !== -1) {
-            tasks.value[index] = {
-                ...tasks.value[index],
-                ...updatedTask,
-                updatedAt: new Date().toISOString()
-            }
+            console.error('Błąd pobierania zadań:', error)
         }
     }
 
     async function deleteTask(id) {
         try {
-            const res = await fetch(`http://localhost:8081/tasks/remove/${id}`, {
+            const res = await fetch(`http://localhost:8081/tasks/delete/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': bearer
                 }
             })
 
-            if(res.ok){
-                return true
-            }else if (res.status === 404){
-                return false
+            if(res.ok) {
+                tasks.value = tasks.value.filter(task => task.id !== id)
             }
         } catch (error) {
-            console.error('Błąd pobierania tasków:', error)
-            return false
+            console.error('Błąd usuwania zadania:', error)
         }
     }
 
-    return {
-        tasks,
-        // addTask,
-        fetchTasks,
-        updateTask,
-        deleteTask
-    }
+    return { tasks, updateTask, fetchTasks, deleteTask }
 })

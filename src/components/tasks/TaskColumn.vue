@@ -56,11 +56,6 @@ const filteredTasks = computed(() => {
   return props.tasks.filter(task => task.status === props.status)
 })
 
-// onMounted(async() =>{
-//   await taskStore.fetchTasks(teamStore.currentTeamId);
-// })
-
-
 const columnClass = computed(() => `status-${props.status}`)
 
 const handleDrop = (e) => {
@@ -150,27 +145,4 @@ const handleDrop = (e) => {
   padding: 1rem;
   border-radius: 4px;
 }
-
-
-/* Kolory kolumn */
-
-/*
-.status-todo {
-  border-top: 4px solid #deebff;
-}
-
-.status-in-progress {
-  border-top: 4px solid #eae6ff;
-}
-
-.status-review {
-  border-top: 4px solid #fff0e6;
-}
-
-.status-done {
-  border-top: 4px solid #e3fcef;
-}
-
- */
-
 </style>
