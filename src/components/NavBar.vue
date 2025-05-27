@@ -2,13 +2,11 @@
   <nav class="sidebar">
     <div class="sidebar-header">
       <img class="sidebar-logo" src="../assets/TaskSyncLogo.svg" alt="Logo">
-      <p class="sidebar-user">Witaj, {{ authStore.user?.firstName }}</p>
+      <UserPanel />
     </div>
-
 
     <div class="team-selector-bottom">
       <div class="team-select-header" @click="toggleTeamDropdown">
-
         <span>{{ teamStore.currentTeamName }}</span>
         <span class="dropdown-icon">{{ isTeamDropdownOpen ? '▲' : '▼' }}</span>
       </div>
@@ -22,7 +20,6 @@
             @click="selectTeam(team.id)"
         >
           {{ team.teamName }}
-<!--          <span v-if="team.isPersonal" class="personal-badge">Osobiste</span>-->
         </div>
 
         <div class="team-divider"></div>
@@ -33,7 +30,6 @@
       </div>
     </div>
 
-
     <ul class="sidebar-links">
       <li v-for="link in links" :key="link.path" class="sidebar-item">
         <router-link
@@ -41,8 +37,7 @@
             class="sidebar-link"
             active-class="active-link"
         >
-<!--          <span class="sidebar-icon"></span>-->
-          <img :src=link.icon alt="TasksIcon" class="sidebar-icon">
+          <img :src="link.icon" alt="Icon" class="sidebar-icon">
           {{ link.label }}
         </router-link>
       </li>
@@ -51,30 +46,29 @@
 </template>
 
 <script setup>
-import {ref, onMounted, onBeforeMount} from 'vue'
+import {ref, onMounted} from 'vue'
 import { useAuthStore } from '/src/stores/auth.js'
 import { useTeamStore } from '/src/stores/team.js'
 import { useModalStore } from '/src/stores/modal.js'
+import UserPanel from './users/UserPanel.vue'
 
 const authStore = useAuthStore()
 const teamStore = useTeamStore()
 const modalStore = useModalStore()
 import tasksIC from '/src/assets/tasksIcon.svg';
 import usersIC from '/src/assets/usersIcon.svg';
-import {data} from "autoprefixer";
 
 const isTeamDropdownOpen = ref(false)
 
 const links = ref([
   { path: '/tasks', label: 'Zadania', icon: tasksIC },
-  { path: '/users', label: 'Użytkownicy', icon: usersIC }
+  { path: '/teams', label: 'Zarządzanie zespołem', icon: usersIC }
 ])
 
 onMounted(async() => {
   await teamStore.fetchTeams()
   await authStore.me();
 })
-
 
 const toggleTeamDropdown = () => {
   isTeamDropdownOpen.value = !isTeamDropdownOpen.value
@@ -121,15 +115,6 @@ const openCreateTeamModal = () => {
   padding: 10px;
   margin-top: 10px;
   margin-bottom: 20px;
-
-}
-
-.sidebar-user {
-  font-size: 0.875rem;
-  width: fit-content;
-  max-width: 100%;
-  color: #273756;
-  margin: 0;
 }
 
 .sidebar-links {
@@ -143,8 +128,6 @@ const openCreateTeamModal = () => {
   font-size: 15px;
   font-weight: normal;
   margin-bottom: 15px;
-
-
 }
 
 .sidebar-link {
@@ -163,7 +146,6 @@ const openCreateTeamModal = () => {
 .active-link{
   border: 1px solid #273756;
   background-color: #dde2f3;
-
 }
 
 .sidebar-link:hover {
@@ -196,8 +178,6 @@ const openCreateTeamModal = () => {
   color: #273756;
 }
 
-
-
 .dropdown-icon {
   font-size: 0.8rem;
 }
@@ -213,7 +193,6 @@ const openCreateTeamModal = () => {
   margin-top: 4px;
   max-height: 50vh;
   overflow-y: scroll;
-
 }
 
 .team-item {
@@ -225,7 +204,6 @@ const openCreateTeamModal = () => {
   transition: background-color 0.2s;
   height: 40px;
   border-top: solid 2px #f4f4f9;
-
 }
 
 .team-item:hover {
@@ -235,14 +213,6 @@ const openCreateTeamModal = () => {
 .active-team {
   background-color: rgb(217, 222, 241);
   font-weight: 500;
-}
-
-.personal-badge {
-  font-size: 0.7rem;
-  background-color: rgb(242, 242, 248);
-  padding: 0.2rem 0.4rem;
-  border-radius: 0.75rem;
-  margin-left: 0.5rem;
 }
 
 .team-divider {
