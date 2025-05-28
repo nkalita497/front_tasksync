@@ -120,7 +120,7 @@ const fetchUserTeams = async () => {
 
   try {
     loadingTeams.value = true
-    const response = await fetch(`http://localhost:8081/teams/user/${authStore.user.id}`, {
+    const response = await fetch(`http://localhost:8081/teams`, {
       headers: {
         'Authorization': `Bearer ${authStore.token}`
       }
@@ -141,7 +141,7 @@ const fetchUserTasks = async () => {
 
   try {
     loadingTasks.value = true
-    const response = await fetch(`http://localhost:8081/tasks/user/${authStore.user.id}`, {
+    const response = await fetch(`http://localhost:8081/tasks/search-assigned`, {
       headers: {
         'Authorization': `Bearer ${authStore.token}`
       }

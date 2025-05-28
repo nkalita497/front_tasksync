@@ -1,10 +1,12 @@
 import {defineStore} from 'pinia'
 import {computed, ref} from 'vue'
+import {useTasksStore} from "@/stores/tasks.js";
 
 export const useAuthStore = defineStore('auth', () => {
     const user = ref(null)
     const token = ref(localStorage.getItem('token') || '')
     const isAuthenticated = computed(() => !!token.value)
+    const taskStore = useTasksStore();
 
     async function login(email, password) {
         try {
@@ -22,6 +24,9 @@ export const useAuthStore = defineStore('auth', () => {
             token.value = data.token
             localStorage.setItem('token', data.token)
             user.value = me();
+            const teamId = localStorage.getItem('selectedTeam')*1 || user.value.teamIds[0]
+            await taskStore.fetchTasks();
+
         } catch (err) {
             console.error(err)
             throw err
