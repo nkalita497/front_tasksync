@@ -49,7 +49,7 @@ const submitLogin = async () => {
   errorMessage.value = ''
   try {
     await authStore.login(email.value, password.value)
-    router.push('/tasks')
+    await router.push('/tasks')
   } catch {
     errorMessage.value = 'Nieprawidłowy email lub hasło'
   }

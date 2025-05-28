@@ -95,9 +95,17 @@ const createTeam = async () => {
       throw new Error(errorData.message || 'Nie udało się utworzyć zespołu')
     }else{
       successMessage.value = 'Zespół został pomyślnie utworzony!'
+
       await teamStore.fetchTeams()
-      teamStore.setCurrentTeam(teamStore.allTeams[teamStore.allTeams.length-1])
-      console.log(teamStore.allTeams[teamStore.allTeams.length-1].teamName);
+      // teamStore.setCurrentTeam(teamStore.allTeams[teamStore.allTeams.length-1])
+      // console.log(teamStore.allTeams[teamStore.allTeams.length-1].teamName);
+
+      // console.log(teamStore.allTeams)
+      // const index = teamStore.allTeams[teamStore.allTeams.length-1];
+      // const newTeamId = teamStore.allTeams[index];
+      // console.log("a" + newTeamId);
+      // console.log("Hello")
+
       emit('close');
       window.location.reload();
 
@@ -109,7 +117,7 @@ const createTeam = async () => {
 
   } catch (error) {
     console.error('Błąd tworzenia zespołu:', error)
-    errorMessage.value = error.message || 'Wystąpił błąd podczas tworzenia zespołu'
+    errorMessage.value =  'Wystąpił błąd podczas tworzenia zespołu'
   } finally {
     loading.value = false
   }

@@ -10,15 +10,22 @@ export const useTeamStore = defineStore('team', () => {
 
     const currentTeamName = computed( () => {
         setCurrentTeam(localStorage.getItem('selectedTeam')*1);
+
+
         if(currentTeamId.value === undefined || currentTeamId.value === null) {
             fetchTeams()
-            return allTeams.value.find(team => team.id === 0)?.teamName || 'Ładowanie...'
+            return allTeams?.value.find(team => team.id === 0)?.teamName || 'Ładowanie...'
         }
-        return allTeams?.value.find(team => team.id === currentTeamId.value)?.teamName || 'Ładowanie...'
+        if(allTeams?.value.find(team => team.id === currentTeamId.value)?.teamName == null){
+            return allTeams?.value.find(team => team.id === 0)?.teamName || 'Ładowanie...'
+        }else{
+            return allTeams?.value.find(team => team.id === currentTeamId.value)?.teamName || 'Ładowanie...'
+        }
     })
 
     // Pobierz zespoły użytkownika z API
     async function fetchTeams() {
+        console.log("fetching teams..")
         try {
             const res = await fetch('http://localhost:8081/teams', {
                 method: 'GET',
@@ -31,10 +38,16 @@ export const useTeamStore = defineStore('team', () => {
 
             setCurrentTeam(localStorage.getItem('selectedTeam')*1)
 
+
+            if(allTeams.value.find(team => team.id === currentTeamId.value) === undefined){
+                console.log("tutaj")
+                setCurrentTeam(allTeams.value[0].id)
+            }
+
             // Jeśli nie ustawiono zespołu, ustaw pierwszy
             if (!currentTeamId.value && data.length > 0) {
-                console.log("Ustawiam")
-                setCurrentTeam(data[0].id)
+                console.log(allTeams.value)
+                setCurrentTeam(allTeams.value[0].id)
             }
 
         } catch (error) {

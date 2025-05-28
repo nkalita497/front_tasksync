@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { onMounted, computed } from 'vue'
+import {onMounted, computed, nextTick} from 'vue'
 import { useAuthStore } from './stores/auth'
 import { useTeamStore } from './stores/team'
 import { useModalStore } from './stores/modal'
@@ -44,7 +44,6 @@ import TaskModal from './components/tasks/TaskModal.vue'
 
 // ---------- STORES ----------
 const authStore = useAuthStore()
-const teamStore = useTeamStore()
 const modalStore = useModalStore()
 const tasksStore = useTasksStore()
 
@@ -52,9 +51,9 @@ const isAuthenticated = computed(() => authStore.isAuthenticated)
 
 
 // ---------- LIFECYCLE ----------
-onMounted(() => {
-  teamStore.fetchTeams();
-})
+// onMounted(() => {
+//    teamStore.fetchTeams();
+// })
 
 const openModalAtClick = (event) => {
   showModal.value = true
