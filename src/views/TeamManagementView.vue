@@ -258,7 +258,7 @@ const fetchTeamMembers = async () => {
 
   loadingMembers.value = true
   try {
-    const response = await fetch(`http://localhost:8081/teams/${currentTeam.value.id}/members`, {
+    const response = await fetch(`http://localhost:8081/teams/${currentTeam.value.id}/users`, {
       headers: {
         'Authorization': `Bearer ${authStore.token}`
       }
@@ -286,6 +286,8 @@ const fetchTeamTasks = async () => {
 
     if (response.ok) {
       teamTasks.value = await response.json()
+    }else {
+      teamTasks.value = [];
     }
   } catch (error) {
     console.error('Error fetching team tasks:', error)

@@ -25,7 +25,7 @@ export const useAuthStore = defineStore('auth', () => {
             localStorage.setItem('token', data.token)
             user.value = me();
             const teamId = localStorage.getItem('selectedTeam')*1 || user.value.teamIds[0]
-            await taskStore.fetchTasks();
+            await taskStore.fetchTasks(teamId);
 
         } catch (err) {
             console.error(err)

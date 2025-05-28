@@ -7,7 +7,7 @@
 
     <div class="team-selector-bottom">
       <div class="team-select-header" @click="toggleTeamDropdown">
-        <span>{{ teamStore.currentTeamName }}</span>
+        <span>{{ teamStore?.currentTeamName }}</span>
         <span class="dropdown-icon">{{ isTeamDropdownOpen ? '▲' : '▼' }}</span>
       </div>
 

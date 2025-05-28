@@ -14,7 +14,7 @@ export const useTeamStore = defineStore('team', () => {
             fetchTeams()
             return allTeams.value.find(team => team.id === 0)?.teamName || 'Ładowanie...'
         }
-        return allTeams.value.find(team => team.id === currentTeamId.value)?.teamName || 'Ładowanie...'
+        return allTeams?.value.find(team => team.id === currentTeamId.value)?.teamName || 'Ładowanie...'
     })
 
     // Pobierz zespoły użytkownika z API
