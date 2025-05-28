@@ -2,7 +2,7 @@
   <div class="team-management">
     <div class="team-header">
       <div class="header-info">
-        <h1>{{ currentTeam?.teamName || 'Zarządzanie zespołem' }}</h1>
+        <h2>{{ currentTeam?.teamName || 'Zarządzanie zespołem' }}</h2>
         <p v-if="currentTeam?.description" class="team-description">
           {{ currentTeam.description }}
         </p>
@@ -444,15 +444,24 @@ onMounted(() => {
   padding: 0;
   background-color: #f4f4f9;
   min-height: 100vh;
+  overflow: hidden;
 }
 
 .team-header {
-  padding: 2rem 2rem 1rem;
-  border-bottom: 1px solid #e2e8f0;
-  background: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  padding: 15px 30px 20px;
+  border-bottom: 1px solid #adb6d2;
+}
+
+.team-content {
+  padding: 40px;
+  height: calc(100vh - 185px);
+  overflow-y: scroll;
+}
+
+.team-header h2 {
+  margin: 0;
+  font-size: 30px;
+  color: #1e293b;
 }
 
 .header-info h1 {
@@ -462,10 +471,11 @@ onMounted(() => {
 }
 
 .team-description {
-  margin: 0;
+  margin: 0.5rem 0 0;
   color: #64748b;
-  font-size: 1rem;
+  font-size: 15px;
 }
+
 
 .management-actions {
   margin-bottom: 2rem;
@@ -544,11 +554,7 @@ onMounted(() => {
   color: #6b7280;
 }
 
-.team-content {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
+
 
 .team-stats {
   display: grid;

@@ -194,14 +194,13 @@ onMounted(async () => {
 }
 
 .profile-header {
-  padding: 2rem 2rem 1rem;
-  border-bottom: 1px solid #e2e8f0;
-  background: white;
+  padding: 30px 30px 35.5px;
+  border-bottom: 1px solid #adb6d2;
 }
 
 .profile-header h1 {
   margin: 0;
-  font-size: 2rem;
+  font-size: 30px;
   color: #1e293b;
 }
 
