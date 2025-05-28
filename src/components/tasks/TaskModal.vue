@@ -106,7 +106,7 @@ watch(() => props.task, (task) => {
       subtasks: task.subtasks
           ? task.subtasks.map(st => ({
             title: st.content || '',
-            completed: st.status === 'DONE'
+            completed: st.status === true
           }))
           : []
     }
@@ -155,7 +155,7 @@ const saveTask = async () => {
         teamId: localStorage.getItem('selectedTeam') * 1,
         subtasks: formData.value.subtasks.map(st => ({
           content: st.title,
-          status: st.completed ? 'DONE' : 'TO_DO'
+          status: st.completed ? true : false
         }))
       })
     })
