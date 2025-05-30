@@ -35,7 +35,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useAuthStore } from '../../stores/auth'
+import { useAuthStore } from '@/stores/auth.js'
 import { useRouter } from 'vue-router'
 
 const firstName = ref('')
@@ -52,7 +52,7 @@ const register = async () => {
   try {
     await authStore.register(firstName.value, lastName.value, email.value, password.value)
     // Zmienione z '/dashboard' na '/login'
-    router.push('/login')
+    await router.push('/login')
   } catch {
     errorMessage.value = 'Coś poszło nie tak podczas rejestracji. Spróbuj ponownie.'
   }

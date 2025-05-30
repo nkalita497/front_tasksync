@@ -8,25 +8,19 @@ export const useTeamStore = defineStore('team', () => {
     const bearer = 'Bearer ' + localStorage.getItem("token");
     const allTeams = ref([])
 
-    const currentTeamName = computed( () => {
-        setCurrentTeam(localStorage.getItem('selectedTeam')*1);
 
-
-        if(currentTeamId.value === undefined || currentTeamId.value === null) {
-            fetchTeams()
-            return allTeams?.value.find(team => team.id === 0)?.teamName || 'Ładowanie...'
+    const currentTeamName = computed(() => {
+        if (!currentTeamId.value || !allTeams.value.length) {
+            return 'Ładowanie...'
         }
-        if(allTeams?.value.find(team => team.id === currentTeamId.value)?.teamName == null){
-            return allTeams?.value.find(team => team.id === 0)?.teamName || 'Ładowanie...'
-        }else{
-            return allTeams?.value.find(team => team.id === currentTeamId.value)?.teamName || 'Ładowanie...'
-        }
+        const found = allTeams.value.find(team => team.id === currentTeamId.value)
+        return found ? found.teamName : 'Ładowanie...'
     })
 
     // Pobierz zespoły użytkownika z API
     async function fetchTeams() {
-        console.log("fetching teams..")
         try {
+            const bearer = 'Bearer ' + authStore.token;
             const res = await fetch('http://localhost:8081/teams', {
                 method: 'GET',
                 headers: {
@@ -36,17 +30,16 @@ export const useTeamStore = defineStore('team', () => {
             const data = await res.json()
             allTeams.value = data
 
-            setCurrentTeam(localStorage.getItem('selectedTeam')*1)
+            setCurrentTeam(localStorage.getItem('selectedTeam') * 1)
 
 
-            if(allTeams.value.find(team => team.id === currentTeamId.value) === undefined){
+            if (allTeams.value.find(team => team.id === currentTeamId.value) === undefined) {
                 console.log("tutaj")
                 setCurrentTeam(allTeams.value[0].id)
             }
 
             // Jeśli nie ustawiono zespołu, ustaw pierwszy
             if (!currentTeamId.value && data.length > 0) {
-                console.log(allTeams.value)
                 setCurrentTeam(allTeams.value[0].id)
             }
 
@@ -59,6 +52,11 @@ export const useTeamStore = defineStore('team', () => {
     function setCurrentTeam(teamId) {
         currentTeamId.value = teamId
         localStorage.setItem('selectedTeam', teamId) // Zapisz wybór
+    }
+
+    function clearTeams() {
+        allTeams.value = [];
+        currentTeamId.value = null;
     }
 
 

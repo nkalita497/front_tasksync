@@ -1,6 +1,7 @@
 import {defineStore} from 'pinia'
 import {computed, ref} from 'vue'
 import {useTasksStore} from "@/stores/tasks.js";
+import {useTeamStore} from "@/stores/team.js";
 
 export const useAuthStore = defineStore('auth', () => {
     const user = ref(null)
@@ -22,9 +23,13 @@ export const useAuthStore = defineStore('auth', () => {
 
             const data = await res.json()
             token.value = data.token
-            console.log(token.value)
             localStorage.setItem('token', data.token)
-            user.value = me();
+            await me();
+
+            const teamStore = useTeamStore()
+            await teamStore.fetchTeams()
+            await taskStore.fetchTasks(teamStore.currentTeamId)
+
 
         } catch (err) {
             console.error(err)
@@ -53,6 +58,9 @@ export const useAuthStore = defineStore('auth', () => {
     function logout() {
         token.value = ''
         user.value = null
+        taskStore.clearTasks && taskStore.clearTasks()
+        const teamStore = useTeamStore()
+        teamStore.clearTeams && teamStore.clearTeams()
         localStorage.removeItem('token')
     }
 

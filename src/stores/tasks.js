@@ -78,5 +78,9 @@ export const useTasksStore = defineStore('tasks', () => {
         }
     }
 
-    return { tasks, updateTask, fetchTasks, deleteTask }
+    function clearTasks() {
+        tasks.value = []
+    }
+
+    return { tasks, updateTask, fetchTasks, deleteTask , clearTasks}
 })
